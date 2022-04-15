@@ -5,6 +5,7 @@ import Navbar from "./components/Navbar";
 import { Routes, Route } from "react-router-dom";
 // import Account from "./page/account";
 import Home from "./pages/home";
+import LogIn from "./pages/logIn";
 
 function App() {
   const [isOpen, setIsOpen] = useState(false);
@@ -29,6 +30,7 @@ function App() {
       <Dropdown isOpen={isOpen} toggle={toggle} />
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/login" element={<LogIn />} />
         {/* <Route path="/account" element={<Account />} /> */}
       </Routes>
     </>
