@@ -34,7 +34,7 @@ const LogIn = () => {
           <div className="mb-10">
             <label
               className="block text-gray-daker text-sm font-bold mb-2"
-              for="Password"
+              for="password"
             >
               รหัสผ่าน
             </label>
@@ -42,7 +42,7 @@ const LogIn = () => {
               class="shadow appearance-none border rounded w-full py-2 px-3 text-grey-darker"
               id="password"
               type="text"
-              placeholder="password"
+              placeholder="Password"
             ></input>
           </div>
           <div className="mb-7">

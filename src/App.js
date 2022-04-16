@@ -6,6 +6,7 @@ import { Routes, Route } from "react-router-dom";
 // import Account from "./page/account";
 import Home from "./pages/home";
 import LogIn from "./pages/logIn";
+import Register from "./pages/register";
 
 function App() {
   const [isOpen, setIsOpen] = useState(false);
@@ -31,6 +32,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<LogIn />} />
+        <Route path="/register" element={<Register />} />
         {/* <Route path="/account" element={<Account />} /> */}
       </Routes>
     </>
