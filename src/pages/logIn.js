@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useState } from "react";
+// import axios from "axios";
 
-const LogIn = () => {
+function LogIn() {
   return (
     <div className="h-screen flex justify-center  bg-[#FFE5A3] font-prompt">
       <div>
@@ -58,6 +59,6 @@ const LogIn = () => {
       </div>
     </div>
   );
-};
+}
 
 export default LogIn;
