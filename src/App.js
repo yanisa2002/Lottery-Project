@@ -7,6 +7,7 @@ import { Routes, Route } from "react-router-dom";
 import Home from "./pages/home";
 import LogIn from "./pages/logIn";
 import Register from "./pages/register";
+import Notification from "./pages/notification";
 
 function App() {
   const [isOpen, setIsOpen] = useState(false);
@@ -33,6 +34,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<LogIn />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/notification" element={<Notification />} />
         {/* <Route path="/account" element={<Account />} /> */}
       </Routes>
     </>
