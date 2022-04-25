@@ -8,6 +8,7 @@ import Home from "./pages/home";
 import LogIn from "./pages/logIn";
 import Register from "./pages/register";
 import Notification from "./pages/notification";
+import Random from "./pages/random";
 
 function App() {
   const [isOpen, setIsOpen] = useState(false);
@@ -35,6 +36,7 @@ function App() {
         <Route path="/login" element={<LogIn />} />
         <Route path="/register" element={<Register />} />
         <Route path="/notification" element={<Notification />} />
+        <Route path="/orders" element={<Random />} />
         {/* <Route path="/account" element={<Account />} /> */}
       </Routes>
     </>
