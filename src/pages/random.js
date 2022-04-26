@@ -1,6 +1,14 @@
-import React from "react";
+import React, { useState } from "react";
 
 const Random = () => {
+  const [random, setRandom] = useState("");
+  const [success, setSuccess] = useState(false);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log(random);
+  };
+
   return (
     <div className="h-screen flex justify-center  bg-[#FFE5A3] font-prompt">
       <div>
@@ -17,31 +25,35 @@ const Random = () => {
           <label className="block text-gray-darker text-lg font-bold mb-8">
             ระบบสุ่มฝาก
           </label>
-          <div className="mb-5">
-            <label
-              className="block text-gray-darker text-sm font-bold mb-2"
-              for="count"
-            >
-              จำนวนสลาก
-            </label>
-            <label className="block text-gray-darker text-sm mb-2 text-red-600">
-              *หมายเหตุ : โปรดระบุจำนวนไม่เกิน 50 ใบ
-            </label>
-          </div>
+          <form onSubmit={handleSubmit}>
+            <div className="mb-5">
+              <label
+                className="block text-gray-darker text-sm font-bold mb-2"
+                for="count"
+              >
+                จำนวนสลาก
+              </label>
+              <label className="block text-gray-darker text-sm mb-2 text-red-600">
+                *หมายเหตุ : โปรดระบุจำนวนไม่เกิน 50 ใบ
+              </label>
+            </div>
 
-          <input
-            class="shadow appearance-none border rounded w-full py-2 px-3 text-grey-darker"
-            id="count"
-            type="number"
-            min={1}
-            max={50}
-          />
+            <input
+              class="shadow appearance-none border rounded w-full py-2 px-3 text-grey-darker"
+              id="count"
+              type="number"
+              min={1}
+              max={50}
+              onChange={(e) => setRandom(e.target.value)}
+              value={random}
+            />
 
-          <div className="mt-7">
-            <button className="w-full inline-flex items-center justify-center px-4 py-2 bg-red-600 border border-transparent rounded-md font-semibold capitalize text-white hover:bg-red-700 active:bg-red-700 focus:outline-none focus:border-red-700 focus:ring focus:ring-red-200 disabled:opacity-25 transition">
-              ยืนยันเพื่อเพิ่มลงตะกร้า
-            </button>
-          </div>
+            <div className="mt-7">
+              <button className="w-full inline-flex items-center justify-center px-4 py-2 bg-red-600 border border-transparent rounded-md font-semibold capitalize text-white hover:bg-red-700 active:bg-red-700 focus:outline-none focus:border-red-700 focus:ring focus:ring-red-200 disabled:opacity-25 transition">
+                ยืนยันเพื่อเพิ่มลงตะกร้า
+              </button>
+            </div>
+          </form>
         </div>
       </div>
     </div>
