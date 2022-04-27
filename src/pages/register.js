@@ -4,7 +4,7 @@ const Register = () => {
   const defaultValues = {
     Title: "",
     Firstname: "",
-    LastName: "",
+    Lastname: "",
     UserName: "",
     Password: "",
     Email: "",
@@ -20,6 +20,8 @@ const Register = () => {
       ZipCode: "",
     },
     IDCard: "",
+    URLImage: "",
+    Role: "",
     wantToBeSeller: "",
   };
   const [formValues, setFormValues] = useState(defaultValues);
@@ -51,41 +53,58 @@ const Register = () => {
   const validate = (values) => {
     const errors = {};
     const regex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i;
+    const thai_regex = /^[ก-๏]{0,31}$/;
     if (!values.Title) {
       errors.Title = "กรุณาเลือกคำนำหน้าชื่อ";
     }
     if (!values.Firstname) {
       errors.Firstname = "กรุณากรอกชื่อ";
+    } else if (!thai_regex.test(values.Firstname)) {
+      errors.Firstname = "กรุณากรอกเป็นภาษาไทย";
     }
-    if (!values.LastName) {
-      errors.LastName = "กรุณากรอกนามสกุล";
-    }
-    if (!values.UserName) {
-      errors.UserName = "กรุณากรอกชื่อผู้ใช้";
-    }
-    if (!values.email) {
-      errors.email = "กรุณากรอกอีเมล";
-    } else if (!regex.test(values.email)) {
-      errors.email = "ไม่ตรงตามรูปแบบ";
-    }
-    if (!values.password) {
-      errors.password = "กรุณากรอกรหัสผ่าน";
-    } else if (values.password.length < 4) {
-      errors.password = "Password must be more than 4 characters";
-    } else if (values.password.length > 10) {
-      errors.password = "Password cannot exceed more than 10 characters";
+
+    if (!values.Lastname) {
+      errors.Lastname = "กรุณากรอกนามสกุล";
+    } else if (!thai_regex.test(values.Lastname)) {
+      errors.Lastname = "กรุณากรอกเป็นภาษาไทย";
     }
 
     if (!values.IDCard) {
       errors.IDCard = "กรุณากรอกเลขบัตรประชาชน";
+    } else if (values.IDCard.length !== 13) {
+      errors.IDCard = "กรุณากรอกให้ครบ 13 หลัก";
     }
+
     if (!values.Birthday) {
       errors.Birthday = "กรุณาเลือกวัน เดือน ปีเกิด";
     }
+
+    if (!values.Email) {
+      errors.Email = "กรุณากรอกอีเมล";
+    } else if (!regex.test(values.Email)) {
+      errors.Email = "ไม่ตรงตามรูปแบบ";
+    }
+
     if (!values.UserName) {
       errors.UserName = "กรุณากรอกชื่อผู้ใช้";
+    } else if (values.UserName.length < 4) {
+      errors.UserName = "ชื่อผู้ใช้ต้องมี 4 ตัวอักษรขึ้นไป";
+    } else if (values.UserName.length > 24) {
+      errors.UserName = "ชื่อผู้ใช้ต้องมีไม่เกิน 24 ตัวอักษร";
     }
-    return errors;
+
+    if (!values.Password) {
+      errors.Password = "กรุณากรอกรหัสผ่าน";
+    } else if (values.Password.length < 8) {
+      errors.Password = "ชื่อผู้ใช้ต้องมี 8 ตัวอักษรขึ้นไป";
+    } else if (values.Password.length > 24) {
+      errors.Password = "ชื่อผู้ใช้ต้องมีไม่เกิน 24 ตัวอักษร";
+    }
+    if (!values.Tel) {
+      errors.Tel = "กรุณากรอกเบอร์โทรศัพท์";
+    } else if (values.Tel.length !== 10) {
+      errors.Tel = "กรุณากรอกเบอร์โทรศัพท์ใหครบ 10 หลัก";
+    }
   };
 
   return (
@@ -100,11 +119,12 @@ const Register = () => {
         <div className="flex flex-col p-8 m-8 bg-white w-[600px] sm:min-w-[400px] min-w-[300px]  rounded-xl shadow-xl">
           <h1 className="text-xl font-bold mb-2">สร้างบัญชีของคุณ</h1>
           <h2 className="text-lg mb-4 text-[#E54E3D]">ข้อมูลส่วนตัว</h2>
-          {Object.keys(formErrors).length === 0 && isSubmit ? (
+          {/* {Object.keys(formErrors).length === 0 && isSubmit ? (
             <div>Signup successfully</div>
           ) : (
             <pre>{JSON.stringify(formValues, undefined, 2)}</pre>
-          )}
+          )} */}
+          {/* <pre>{JSON.stringify(formValues, undefined, 2)}</pre> */}
           <form onSubmit={handleSubmit}>
             <label
               className="block text-gray-darker text-md font-bold mb-2"
@@ -112,7 +132,6 @@ const Register = () => {
             >
               คำนำหน้าชื่อ
             </label>
-
             <select
               className="border border-gray-300 rounded text-gray-600 h-10 pl-5 pr-10 bg-white hover:border-gray-400 focus:outline-none appearance-none"
               name="Title"
@@ -125,7 +144,6 @@ const Register = () => {
               <option value="Miss">นางสาว</option>
             </select>
             <p className="text-red-600">{formErrors.Title}</p>
-
             <div className=" flex-col grid grid-cols-2 gap-9">
               <div className="flex flex-col">
                 <label
@@ -154,16 +172,15 @@ const Register = () => {
                 </label>
                 <input
                   class="shadow appearance-none border rounded py-2 px-3 text-grey-darker"
-                  name="LastName"
+                  name="Lastname"
                   type="text"
-                  placeholder="LastName"
-                  value={formValues.LastName}
+                  placeholder="Lastname"
+                  value={formValues.Lastname}
                   onChange={handleChange}
                 ></input>
-                <p className="text-red-600">{formErrors.LastName}</p>
+                <p className="text-red-600">{formErrors.Lastname}</p>
               </div>
             </div>
-
             <label
               className="block text-gray-darker text-md font-bold mt-4 mb-2"
               htmlFor="IDCard"
@@ -194,7 +211,6 @@ const Register = () => {
               onChange={handleChange}
             />
             <p className="text-red-600">{formErrors.Birthday}</p>
-
             <label
               className="block text-gray-darker text-md font-bold mt-4 mb-2"
               htmlFor="Email"
@@ -209,10 +225,10 @@ const Register = () => {
               value={formValues.Email}
               onChange={handleChange}
             ></input>
-            <p className="text-red-600">{formErrors.Email}</p>
+            {/* <p className="text-red-600">{formErrors.Email}</p> */}
             <label
               className="block text-gray-darker text-md font-bold mt-4 mb-2"
-              htmlFfor="UserName"
+              htmlFor="UserName"
             >
               ชื่อผู้ใช้
             </label>
@@ -227,7 +243,7 @@ const Register = () => {
             {/* <p className="text-red-600">{formErrors.UserName}</p> */}
             <label
               className="block text-gray-darker text-md font-bold mt-4 mb-2"
-              htmlfor="Password"
+              htmlFor="Password"
             >
               รหัสผ่าน
             </label>
@@ -270,7 +286,6 @@ const Register = () => {
               onChange={handleChange}
             ></input>
             {/* <p className="text-red-600">{formErrors.Tel}</p> */}
-
             <h2 className="text-lg mt-8 mb-4 text-[#E54E3D]">ที่อยู่</h2>
             <div className="grid grid-cols-6 ">
               <label
@@ -323,7 +338,6 @@ const Register = () => {
               ></input>
               {/* <p className="text-red-600">{formErrors.Address.Road}</p> */}
             </div>
-
             <div className="grid grid-cols-4 mt-4 ">
               <label
                 className="block text-gray-darker text-md font-bold mt-4 mb-2"
@@ -392,7 +406,6 @@ const Register = () => {
               ></input>
               {/* <p className="text-red-600">{formErrors.Address.ZipCode}</p> */}
             </div>
-
             <div className="block">
               <div className="mt-5">
                 <label className="inline-flex items-center">
@@ -406,6 +419,41 @@ const Register = () => {
                   <span className="text-gray-darker text-md font-bold ml-2">
                     ต้องการเป็นผู้ขาย
                   </span>
+                </label>
+              </div>
+            </div>
+
+            <div class="m-2">
+              <label class="inline-block mb-2 text-gray-darker">
+                บัตรผู้ซื้อ-จองล่วงหน้าสลากกินแบ่งรัฐบาล
+              </label>
+              <div class="flex items-center justify-center w-full">
+                <label class="flex flex-col w-full h-32 border-4 border-blue-200 border-dashed hover:bg-gray-100 hover:border-gray-300">
+                  <div class="flex flex-col items-center justify-center pt-7">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      class="w-8 h-8 text-gray-400 group-hover:text-gray-600"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+                      />
+                    </svg>
+                    <p class="pt-1 text-sm tracking-wider text-gray-400 group-hover:text-gray-600">
+                      อัพโหลดไฟล์
+                    </p>
+                  </div>
+                  <input
+                    type="file"
+                    class="opacity-0"
+                    // onChange={(e) => setURLImage(e.target.value)}
+                    // value={URLImage}
+                  />
                 </label>
               </div>
             </div>
@@ -428,12 +476,6 @@ const Register = () => {
         </div>
       </div>
     </div>
-    // <form onSubmit={handleSubmit(onSubmit)}>
-    //   <input {...register("Firstname", { required: true, maxLength: 20 })} />
-    //   <input {...register("LastName", { pattern: /^[A-Za-z]+$/i })} />
-    //   <input type="number" {...register("age", { min: 18, max: 99 })} />
-    //   <input type="submit" />
-    // </form>
   );
 };
 

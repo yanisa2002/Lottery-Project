@@ -40,7 +40,7 @@ const Random = () => {
 
             <input
               class="shadow appearance-none border rounded w-full py-2 px-3 text-grey-darker"
-              id="count"
+              name="count"
               type="number"
               min={1}
               max={50}
