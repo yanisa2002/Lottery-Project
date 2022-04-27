@@ -1,7 +1,17 @@
 import React, { useState, useEffect } from "react";
 
 const Register = () => {
-  const defaultValues = {
+  const [address, setAddress] = useState({
+    HomeNo: "",
+    Soi: "",
+    Road: "",
+    Subdistrict: "",
+    District: "",
+    Province: "",
+    ZipCode: "",
+  });
+
+  let defaultValues = {
     Title: "",
     Firstname: "",
     Lastname: "",
@@ -12,18 +22,19 @@ const Register = () => {
     Tel: "",
     Address: {
       HomeNo: "",
-      Soi: "",
-      Road: "",
-      Subdistrict: "",
-      District: "",
-      Province: "",
-      ZipCode: "",
+      Soi: address.Soi,
+      Road: address.Road,
+      Subdistrict: address.Subdistrict,
+      District: address.District,
+      Province: address.Province,
+      ZipCode: address.ZipCode,
     },
     IDCard: "",
     URLImage: "",
     Role: "",
     wantToBeSeller: "",
   };
+
   const [formValues, setFormValues] = useState(defaultValues);
   const [formErrors, setFormErrors] = useState({});
   const [isSubmit, setIsSubmit] = useState(false);
@@ -35,6 +46,13 @@ const Register = () => {
     const { name, value } = e.target;
     setFormValues({ ...formValues, [name]: value });
     console.log(formValues);
+  };
+
+  const handleChangeAdd = (e) => {
+    // console.log(e.target);
+    const { name, value } = e.target;
+    setAddress({ ...address, [name]: value });
+    console.log("ลุงพล", address);
   };
 
   const handleSubmit = (e) => {
@@ -51,60 +69,63 @@ const Register = () => {
   }, []);
 
   const validate = (values) => {
-    const errors = {};
+    let errors = {};
+    console.log(values);
     const regex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i;
     const thai_regex = /^[ก-๏]{0,31}$/;
-    if (!values.Title) {
-      errors.Title = "กรุณาเลือกคำนำหน้าชื่อ";
+    if (values.Title === undefined) {
+      errors["Title"] = "กรุณาเลือกคำนำหน้าชื่อ";
     }
-    if (!values.Firstname) {
-      errors.Firstname = "กรุณากรอกชื่อ";
+    if (values.Firstname === "") {
+      errors["Firstname"] = "กรุณากรอกชื่อ";
     } else if (!thai_regex.test(values.Firstname)) {
-      errors.Firstname = "กรุณากรอกเป็นภาษาไทย";
+      errors["Firstname"] = "กรุณากรอกเป็นภาษาไทย";
     }
 
-    if (!values.Lastname) {
-      errors.Lastname = "กรุณากรอกนามสกุล";
+    if (values.Lastname === "") {
+      errors["Lastname"] = "กรุณากรอกนามสกุล";
     } else if (!thai_regex.test(values.Lastname)) {
-      errors.Lastname = "กรุณากรอกเป็นภาษาไทย";
+      errors["Lastname"] = "กรุณากรอกเป็นภาษาไทย";
     }
 
-    if (!values.IDCard) {
-      errors.IDCard = "กรุณากรอกเลขบัตรประชาชน";
+    if (values.IDCard === undefined) {
+      errors["IDCard"] = "กรุณากรอกเลขบัตรประชาชน";
     } else if (values.IDCard.length !== 13) {
-      errors.IDCard = "กรุณากรอกให้ครบ 13 หลัก";
+      errors["IDCard"] = "กรุณากรอกให้ครบ 13 หลัก";
     }
 
-    if (!values.Birthday) {
-      errors.Birthday = "กรุณาเลือกวัน เดือน ปีเกิด";
+    if (values.Birthday === undefined) {
+      errors["Birthday"] = "กรุณาเลือกวัน เดือน ปีเกิด";
     }
 
-    if (!values.Email) {
-      errors.Email = "กรุณากรอกอีเมล";
+    if (values.Email === undefined) {
+      errors["Email"] = "กรุณากรอกอีเมล";
     } else if (!regex.test(values.Email)) {
-      errors.Email = "ไม่ตรงตามรูปแบบ";
+      errors["Email"] = "ไม่ตรงตามรูปแบบ";
     }
 
-    if (!values.UserName) {
-      errors.UserName = "กรุณากรอกชื่อผู้ใช้";
+    if (values.UserName === undefined) {
+      errors["UserName"] = "กรุณากรอกชื่อผู้ใช้";
     } else if (values.UserName.length < 4) {
-      errors.UserName = "ชื่อผู้ใช้ต้องมี 4 ตัวอักษรขึ้นไป";
+      errors["UserName"] = "ชื่อผู้ใช้ต้องมี 4 ตัวอักษรขึ้นไป";
     } else if (values.UserName.length > 24) {
-      errors.UserName = "ชื่อผู้ใช้ต้องมีไม่เกิน 24 ตัวอักษร";
+      errors["UserName"] = "ชื่อผู้ใช้ต้องมีไม่เกิน 24 ตัวอักษร";
     }
 
-    if (!values.Password) {
-      errors.Password = "กรุณากรอกรหัสผ่าน";
+    if (!values.Password === undefined) {
+      errors["Password"] = "กรุณากรอกรหัสผ่าน";
     } else if (values.Password.length < 8) {
-      errors.Password = "ชื่อผู้ใช้ต้องมี 8 ตัวอักษรขึ้นไป";
+      errors["Password"] = "ชื่อผู้ใช้ต้องมี 8 ตัวอักษรขึ้นไป";
     } else if (values.Password.length > 24) {
-      errors.Password = "ชื่อผู้ใช้ต้องมีไม่เกิน 24 ตัวอักษร";
+      errors["Password"] = "ชื่อผู้ใช้ต้องมีไม่เกิน 24 ตัวอักษร";
     }
-    if (!values.Tel) {
-      errors.Tel = "กรุณากรอกเบอร์โทรศัพท์";
+    if (!values.Tel === undefined) {
+      errors["Tel"] = "กรุณากรอกเบอร์โทรศัพท์";
     } else if (values.Tel.length !== 10) {
-      errors.Tel = "กรุณากรอกเบอร์โทรศัพท์ใหครบ 10 หลัก";
+      errors["Tel"] = "กรุณากรอกเบอร์โทรศัพท์ใหครบ 10 หลัก";
     }
+    console.log("error -> ", errors);
+    return errors;
   };
 
   return (
@@ -150,7 +171,7 @@ const Register = () => {
                   className="block text-gray-darker text-md font-bold mt-4 mb-2"
                   htmlFor="Firstname"
                 >
-                  ชื่อ
+                  ขื่อ
                 </label>
                 <input
                   class="shadow appearance-none border rounded py-2 px-3 text-grey-darker"
@@ -192,6 +213,7 @@ const Register = () => {
               name="IDCard"
               type="text"
               placeholder="Personal ID"
+              maxLength={13}
               value={formValues.IDCard}
               onChange={handleChange}
             ></input>
@@ -225,7 +247,7 @@ const Register = () => {
               value={formValues.Email}
               onChange={handleChange}
             ></input>
-            {/* <p className="text-red-600">{formErrors.Email}</p> */}
+            <p className="text-red-600">{formErrors.Email}</p>
             <label
               className="block text-gray-darker text-md font-bold mt-4 mb-2"
               htmlFor="UserName"
@@ -240,7 +262,7 @@ const Register = () => {
               value={formValues.UserName}
               onChange={handleChange}
             ></input>
-            {/* <p className="text-red-600">{formErrors.UserName}</p> */}
+            <p className="text-red-600">{formErrors.UserName}</p>
             <label
               className="block text-gray-darker text-md font-bold mt-4 mb-2"
               htmlFor="Password"
@@ -255,7 +277,7 @@ const Register = () => {
               value={formValues.Password}
               onChange={handleChange}
             ></input>
-            {/* <p className="text-red-600">{formErrors.Password}</p> */}
+            <p className="text-red-600">{formErrors.Password}</p>
             <label
               className="block text-gray-darker text-md font-bold mt-4 mb-2"
               htmlFor="comfirmPassword"
@@ -282,10 +304,11 @@ const Register = () => {
               name="Tel"
               type="tel"
               placeholder="Phone Number"
+              maxLength={10}
               value={formValues.Tel}
               onChange={handleChange}
             ></input>
-            {/* <p className="text-red-600">{formErrors.Tel}</p> */}
+            <p className="text-red-600">{formErrors.Tel}</p>
             <h2 className="text-lg mt-8 mb-4 text-[#E54E3D]">ที่อยู่</h2>
             <div className="grid grid-cols-6 ">
               <label
@@ -300,8 +323,8 @@ const Register = () => {
                 name="HomeNo"
                 type="text"
                 placeholder="No."
-                value={formValues.Address.HomeNo}
-                onChange={handleChange}
+                value={address.HomeNo}
+                onChange={handleChangeAdd}
               ></input>
               {/* <p className="text-red-600">{formErrors.Address.HomeNo}</p> */}
 
@@ -317,8 +340,8 @@ const Register = () => {
                 name="Soi"
                 type="text"
                 placeholder="Soi"
-                value={formValues.Address.Soi}
-                onChange={handleChange}
+                value={formValues.Soi}
+                onChange={handleChangeAdd}
               ></input>
               {/* <p className="text-red-600">{formErrors.Address.Soi}</p> */}
               <label
