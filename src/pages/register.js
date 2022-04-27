@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import axios from "axios";
+import jwt_decode from "jwt-decode";
 
 const Register = () => {
   // const [address, setAddress] = useState({
@@ -68,7 +70,51 @@ const Register = () => {
     Role: addRole,
     wantToBeSeller: beSell,
   };
-
+  let errors = {};
+  const Register = () => {
+    axios
+      .post("http://2561-2a09-bac0-411-00-81e-ea19.ngrok.io/register", {
+        Title: defaultValues.Title,
+        Firstname: defaultValues.Firstname,
+        Lastname: defaultValues.Lastname,
+        Username: defaultValues.Username,
+        Password: defaultValues.Password,
+        Email: defaultValues.Email,
+        Birthday: defaultValues.Birthday,
+        Tel: defaultValues.Tel,
+        Address: {
+          HomeNo: defaultValues.Address.HomeNo,
+          Soi: defaultValues.Address.Soi,
+          Road: defaultValues.Address.Road,
+          Subdistrict: defaultValues.Address.Subdistrict,
+          District: defaultValues.Address.District,
+          Province: defaultValues.Address.Province,
+          ZipCode: defaultValues.Address.ZipCode,
+        },
+        IDCard: defaultValues.IDCard,
+        URLImage: defaultValues.URLImage,
+        Role: defaultValues.Role,
+        wantToBeSeller: defaultValues.wantToBeSeller,
+      })
+      .then(function (response) {
+        if (response.data.status === "200OK") {
+          localStorage.setItem("token", response.data.token);
+          const decoded = jwt_decode(response.data.token);
+          const { username, role } = decoded;
+          console.log(response);
+        } else if (response.data.status === "200US") {
+          errors["UserName"] = "ชื่อผู้ใช้นี้ถูกใช้งานแล้ว";
+        } else if (response.data.status === "200EM") {
+          errors["Email"] = "อีเมลนี้ถูกใช้งานแล้ว";
+        } else if (response.data.status === "200UE") {
+          errors["UserName"] = "ชื่อผู้ใช้นี้ถูกใช้งานแล้ว";
+          errors["Email"] = "อีเมลนี้ถูกใช้งานแล้ว";
+        }
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  };
   // const handleChange = (e) => {
   //   console.log(e.target);
   //   const { name, value } = e.target;
@@ -88,6 +134,7 @@ const Register = () => {
     e.preventDefault();
     setFormErrors(validate(defaultValues));
     setIsSubmit(true);
+    Register();
   };
 
   useEffect(() => {
@@ -99,7 +146,6 @@ const Register = () => {
   }, []);
 
   const validate = (values) => {
-    let errors = {};
     console.log(values);
     const regex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i;
     const thai_regex = /^[ก-๏]{0,31}$/;

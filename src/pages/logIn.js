@@ -1,6 +1,7 @@
 import React, { useRef, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import axios from "../api/axios";
+import axios from "axios";
+import jwt_decode from "jwt-decode";
 
 const LogIn = () => {
   const userRef = useRef();
@@ -16,6 +17,30 @@ const LogIn = () => {
     Password: pwd,
   };
 
+  const Login = () => {
+    axios
+      .post("http://2561-2a09-bac0-411-00-81e-ea19.ngrok.io/login", {
+        Username: defaultValues.user,
+        Password: defaultValues.pwd,
+      })
+      .then(function (response) {
+        if (response.data.status === "200OK") {
+          localStorage.setItem("token", response.data.token);
+          const decoded = jwt_decode(response.data.token);
+          const { username, role } = decoded;
+          console.log(response);
+        } else if (response.data.status === "200ER") {
+          //รหัสผิดทำไร ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง
+          setErrMsg("ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง");
+        } else {
+          //ไม่เจอusername ไม่พบชื่อผู้ใช้
+          setErrMsg("ไม่พบชื่อผู้ใช้");
+        }
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  };
   useEffect(() => {
     userRef.current.focus();
   }, []);
@@ -55,6 +80,9 @@ const LogIn = () => {
           className="flex flex-col p-8 m-8 bg-white  md:min-w-[600px] 
      sm:min-w-[400px] min-w-[300px]  rounded-xl shadow-xl "
         >
+          <label className="block text-gray-darker text-lg font-bold mb-8">
+            เข้าสู่บัญชีของคุณ
+          </label>
           <p
             ref={errRef}
             className={errMsg ? "errmsg" : "offscreen"}
@@ -62,10 +90,6 @@ const LogIn = () => {
           >
             {errMsg}
           </p>
-
-          <label className="block text-gray-darker text-lg font-bold mb-8">
-            เข้าสู่บัญชีของคุณ
-          </label>
           <form onSubmit={handleSubmit}>
             <div className="mb-10">
               <label
@@ -105,7 +129,10 @@ const LogIn = () => {
             </div>
             {/* <Link to="/"> */}
             <div className="mb-7">
-              <button className="w-full inline-flex items-center justify-center px-4 py-2 bg-red-600 border border-transparent rounded-md font-semibold capitalize text-white hover:bg-red-700 active:bg-red-700 focus:outline-none focus:border-red-700 focus:ring focus:ring-red-200 disabled:opacity-25 transition">
+              <button
+                type="submit"
+                className="w-full inline-flex items-center justify-center px-4 py-2 bg-red-600 border border-transparent rounded-md font-semibold capitalize text-white hover:bg-red-700 active:bg-red-700 focus:outline-none focus:border-red-700 focus:ring focus:ring-red-200 disabled:opacity-25 transition"
+              >
                 เข้าสู่ระบบ
               </button>
             </div>
