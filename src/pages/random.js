@@ -4,9 +4,13 @@ const Random = () => {
   const [random, setRandom] = useState("");
   const [success, setSuccess] = useState(false);
 
+  const defaultValues = {
+    Amount: random,
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(random);
+    console.log(defaultValues);
   };
 
   return (

@@ -1,70 +1,100 @@
 import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 
 const Register = () => {
-  const [address, setAddress] = useState({
-    HomeNo: "",
-    Soi: "",
-    Road: "",
-    Subdistrict: "",
-    District: "",
-    Province: "",
-    ZipCode: "",
-  });
+  // const [address, setAddress] = useState({
+  //   HomeNo: "",
+  //   Soi: "",
+  //   Road: "jim",
+  //   Subdistrict: "",
+  //   District: "",
+  //   Province: "",
+  //   ZipCode: "",
+  // });
 
-  let defaultValues = {
-    Title: "",
-    Firstname: "",
-    Lastname: "",
-    UserName: "",
-    Password: "",
-    Email: "",
-    Birthday: "",
-    Tel: "",
-    Address: {
-      HomeNo: "",
-      Soi: address.Soi,
-      Road: address.Road,
-      Subdistrict: address.Subdistrict,
-      District: address.District,
-      Province: address.Province,
-      ZipCode: address.ZipCode,
-    },
-    IDCard: "",
-    URLImage: "",
-    Role: "",
-    wantToBeSeller: "",
-  };
-
-  const [formValues, setFormValues] = useState(defaultValues);
+  // const [formValues, setFormValues] = useState(defaultValues);
   const [formErrors, setFormErrors] = useState({});
   const [isSubmit, setIsSubmit] = useState(false);
 
+  const [title, setTitle] = useState("");
+  const [firstname, setFirstname] = useState("");
+  const [lastname, setLastname] = useState("");
+  const [UserName, setUserName] = useState("");
+  const [Password, setPassword] = useState("");
+  const [email, setEmail] = useState("");
+  const [birthday, setBirthday] = useState("");
+  const [tel, setTel] = useState("");
+  const [homeNo, setHomeNo] = useState("");
+  const [soi, setSoi] = useState("");
+  const [road, setRoad] = useState("");
+  const [subDistrict, setSubDistrict] = useState("");
+  const [district, setDistrict] = useState("");
+  const [province, setProvince] = useState("");
+  const [zipCode, setZipCode] = useState("");
+  const [idCard, setIDCard] = useState("");
+  const [urlImage, seturlImage] = useState("");
+  const [role, setRole] = useState("");
+  const [wantToBeSeller, setWantToBeSeller] = useState("");
+
   const [comfirmPassword, setConfirmPassword] = useState("");
-
-  const handleChange = (e) => {
-    // console.log(e.target);
-    const { name, value } = e.target;
-    setFormValues({ ...formValues, [name]: value });
-    console.log(formValues);
+  let beSell = wantToBeSeller === true ? "Yes" : "No";
+  let addRole = beSell === "Yes" ? "seller" : "customer";
+  let defaultValues = {
+    Title: title,
+    Firstname: firstname,
+    Lastname: lastname,
+    Username: UserName,
+    Password: Password,
+    Email: email,
+    Birthday: birthday,
+    Tel: tel,
+    Address: {
+      HomeNo: homeNo,
+      Soi: soi,
+      Road: road,
+      Subdistrict: subDistrict,
+      District: district,
+      Province: province,
+      ZipCode: zipCode,
+      //   // Soi: address.Soi,
+      //   // Road: address.Road,
+      //   // Subdistrict: address.Subdistrict,
+      //   // District: address.District,
+      //   // Province: address.Province,
+      //   // ZipCode: address.ZipCode,
+    },
+    IDCard: idCard,
+    URLImage: urlImage,
+    Role: addRole,
+    wantToBeSeller: beSell,
   };
 
-  const handleChangeAdd = (e) => {
-    // console.log(e.target);
-    const { name, value } = e.target;
-    setAddress({ ...address, [name]: value });
-    console.log("ลุงพล", address);
-  };
+  // const handleChange = (e) => {
+  //   console.log(e.target);
+  //   const { name, value } = e.target;
+  //   setFormValues({ ...formValues, [name]: value });
+  //   console.log(defaultValues);
+  // };
+
+  // const handleChangeAdd = (e) => {
+  //   // console.log(e.target);
+  //   const { name, value } = e.target;
+  //   setAddress({ ...address, [name]: value });
+  //   console.log("ลุงพล", address);
+  //   defaultValues["Address"] = address;
+  // };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    setFormErrors(validate(formValues));
+    setFormErrors(validate(defaultValues));
     setIsSubmit(true);
   };
 
   useEffect(() => {
     console.log(formErrors);
     if (Object.keys(formErrors).length === 0 && isSubmit) {
-      console.log(formValues);
+      // setRole(addRole);
+      console.log(defaultValues);
     }
   }, []);
 
@@ -156,8 +186,8 @@ const Register = () => {
             <select
               className="border border-gray-300 rounded text-gray-600 h-10 pl-5 pr-10 bg-white hover:border-gray-400 focus:outline-none appearance-none"
               name="Title"
-              value={formValues.Title}
-              onChange={handleChange}
+              value={title}
+              onChange={(event) => setTitle(event.target.value)}
             >
               <option value="">เลือกคำนำหน้าชื่อ</option>
               <option value="Mr">นาย</option>
@@ -178,8 +208,8 @@ const Register = () => {
                   name="Firstname"
                   type="text"
                   placeholder="Firstname"
-                  value={formValues.Firstname}
-                  onChange={handleChange}
+                  value={firstname}
+                  onChange={(event) => setFirstname(event.target.value)}
                 ></input>
                 <p className="text-red-600">{formErrors.Firstname}</p>
               </div>
@@ -196,8 +226,8 @@ const Register = () => {
                   name="Lastname"
                   type="text"
                   placeholder="Lastname"
-                  value={formValues.Lastname}
-                  onChange={handleChange}
+                  value={lastname}
+                  onChange={(event) => setLastname(event.target.value)}
                 ></input>
                 <p className="text-red-600">{formErrors.Lastname}</p>
               </div>
@@ -214,8 +244,8 @@ const Register = () => {
               type="text"
               placeholder="Personal ID"
               maxLength={13}
-              value={formValues.IDCard}
-              onChange={handleChange}
+              value={idCard}
+              onChange={(event) => setIDCard(event.target.value)}
             ></input>
             <p className="text-red-600">{formErrors.IDCard}</p>
             <label
@@ -229,8 +259,8 @@ const Register = () => {
               name="Birthday"
               type="date"
               placeholder="Select Birthday"
-              value={formValues.Birthday}
-              onChange={handleChange}
+              value={birthday}
+              onChange={(event) => setBirthday(event.target.value)}
             />
             <p className="text-red-600">{formErrors.Birthday}</p>
             <label
@@ -244,8 +274,8 @@ const Register = () => {
               name="Email"
               type="text"
               placeholder="Email"
-              value={formValues.Email}
-              onChange={handleChange}
+              value={email}
+              onChange={(event) => setEmail(event.target.value)}
             ></input>
             <p className="text-red-600">{formErrors.Email}</p>
             <label
@@ -259,8 +289,8 @@ const Register = () => {
               name="UserName"
               type="text"
               placeholder="UserName"
-              value={formValues.UserName}
-              onChange={handleChange}
+              value={UserName}
+              onChange={(event) => setUserName(event.target.value)}
             ></input>
             <p className="text-red-600">{formErrors.UserName}</p>
             <label
@@ -274,8 +304,8 @@ const Register = () => {
               name="Password"
               type="Password"
               placeholder="Password"
-              value={formValues.Password}
-              onChange={handleChange}
+              value={Password}
+              onChange={(event) => setPassword(event.target.value)}
             ></input>
             <p className="text-red-600">{formErrors.Password}</p>
             <label
@@ -290,7 +320,7 @@ const Register = () => {
               type="password"
               placeholder="Confirm Password"
               value={comfirmPassword} ////////////////////////////
-              onChange={handleChange}
+              onChange={(event) => setConfirmPassword(event.target.value)}
             ></input>
             {/* <p className="text-red-600">{formErrors.comfirmPassword}</p> */}
             <label
@@ -302,11 +332,11 @@ const Register = () => {
             <input
               class="shadow appearance-none border rounded w-full py-2 px-3 text-grey-darker"
               name="Tel"
-              type="tel"
+              type="text"
               placeholder="Phone Number"
               maxLength={10}
-              value={formValues.Tel}
-              onChange={handleChange}
+              value={tel}
+              onChange={(event) => setTel(event.target.value)}
             ></input>
             <p className="text-red-600">{formErrors.Tel}</p>
             <h2 className="text-lg mt-8 mb-4 text-[#E54E3D]">ที่อยู่</h2>
@@ -323,8 +353,8 @@ const Register = () => {
                 name="HomeNo"
                 type="text"
                 placeholder="No."
-                value={address.HomeNo}
-                onChange={handleChangeAdd}
+                value={homeNo}
+                onChange={(event) => setHomeNo(event.target.value)}
               ></input>
               {/* <p className="text-red-600">{formErrors.Address.HomeNo}</p> */}
 
@@ -340,8 +370,8 @@ const Register = () => {
                 name="Soi"
                 type="text"
                 placeholder="Soi"
-                value={formValues.Soi}
-                onChange={handleChangeAdd}
+                value={soi}
+                onChange={(event) => setSoi(event.target.value)}
               ></input>
               {/* <p className="text-red-600">{formErrors.Address.Soi}</p> */}
               <label
@@ -356,8 +386,8 @@ const Register = () => {
                 name="Road"
                 type="text"
                 placeholder="Road"
-                value={formValues.Address.Road}
-                onChange={handleChange}
+                value={road}
+                onChange={(event) => setRoad(event.target.value)}
               ></input>
               {/* <p className="text-red-600">{formErrors.Address.Road}</p> */}
             </div>
@@ -374,8 +404,8 @@ const Register = () => {
                 name="Subdistrict"
                 type="text"
                 placeholder="Sub District"
-                value={formValues.Address.Subdistrict}
-                onChange={handleChange}
+                value={subDistrict}
+                onChange={(event) => setSubDistrict(event.target.value)}
               ></input>
               {/* <p className="text-red-600">{formErrors.Address.Subdistrict}</p> */}
               <label
@@ -390,8 +420,8 @@ const Register = () => {
                 name="District"
                 type="text"
                 placeholder="District"
-                value={formValues.Address.District}
-                onChange={handleChange}
+                value={district}
+                onChange={(event) => setDistrict(event.target.value)}
               ></input>
             </div>
             {/* <p className="text-red-600">{formErrors.Address.District}</p> */}
@@ -408,8 +438,8 @@ const Register = () => {
                 name="Province"
                 type="text"
                 placeholder="Province"
-                value={formValues.Address.Province}
-                onChange={handleChange}
+                value={province}
+                onChange={(event) => setProvince(event.target.value)}
               ></input>
               {/* <p className="text-red-600">{formErrors.Address.Province}</p> */}
               <label
@@ -424,8 +454,9 @@ const Register = () => {
                 name="ZipCode"
                 type="text"
                 placeholder="Zip Code"
-                value={formValues.Address.ZipCode}
-                onChange={handleChange}
+                maxLength={5}
+                value={zipCode}
+                onChange={(event) => setZipCode(event.target.value)}
               ></input>
               {/* <p className="text-red-600">{formErrors.Address.ZipCode}</p> */}
             </div>
@@ -436,8 +467,11 @@ const Register = () => {
                     name="wantToBeSeller"
                     type="checkbox"
                     class="w-6 h-6 rounded"
-                    value={formValues.wantToBeSeller}
-                    onChange={handleChange}
+                    checked={wantToBeSeller}
+                    // value={wantToBeSeller}
+                    onChange={(event) =>
+                      setWantToBeSeller(event.target.checked)
+                    }
                   />
                   <span className="text-gray-darker text-md font-bold ml-2">
                     ต้องการเป็นผู้ขาย
@@ -474,8 +508,8 @@ const Register = () => {
                   <input
                     type="file"
                     class="opacity-0"
-                    // onChange={(e) => setURLImage(e.target.value)}
-                    // value={URLImage}
+                    value={urlImage}
+                    onChange={(e) => seturlImage(e.target.value)}
                   />
                 </label>
               </div>
@@ -491,11 +525,13 @@ const Register = () => {
             </div>
           </form>
 
-          <div className="mb-7">
-            <button className="w-full p-10 py-2 px-4 border-2 border-[#E54E3D] rounded text-[#E54E3D] hover:bg-[#E54E3D] hover:text-white transition duration-300">
-              ยกเลิก และ กลับสู่หน้าหลัก
-            </button>
-          </div>
+          <Link to="/">
+            <div className="mb-7">
+              <button className="w-full p-10 py-2 px-4 border-2 border-[#E54E3D] rounded text-[#E54E3D] hover:bg-[#E54E3D] hover:text-white transition duration-300">
+                ยกเลิก และ กลับสู่หน้าหลัก
+              </button>
+            </div>
+          </Link>
         </div>
       </div>
     </div>
