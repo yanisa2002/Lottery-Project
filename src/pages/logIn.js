@@ -5,6 +5,11 @@ const LogIn = () => {
   const userRef = useRef();
   const errRef = useRef();
 
+  // const defaultValues = {
+  //   username: "",
+  //   Password: ""
+  // }
+
   const [user, setUser] = useState("");
   const [pwd, setPwd] = useState("");
   const [errMsg, setErrMsg] = useState("");

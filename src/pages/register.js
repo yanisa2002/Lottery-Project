@@ -1,95 +1,91 @@
-import React, { useRef, useState, useEffect } from "react";
-// import Datepicker from "@themesberg/tailwind-datepicker/Datepicker";
-// import flatpickr from "flatpickr";
-import axios from "../api/axios";
-
-const firstname_REGEX = /^[ก-๏]{0,31}$/; //^[ก-๏\s]+$
-
-// flatpickr(".flatpickr.js-flatpickr-date", {
-//   enableTime: false,
-//   altInput: true,
-//   altFormat: "d M Y",
-//   dateFormat: "Y-m-d",
-// });
+import React, { useState, useEffect } from "react";
 
 const Register = () => {
-  // const defaultValues = {
-  //   Title: "",
-  //   firstname: "",
-  //   LastName: "",
-  //   UserName: "",
-  //   Password: "",
-  //   Email: "",
-  //   Birthday: "",
-  //   Tel: "",
-  //   Address: {
-  //     HomeNo: "",
-  //     Soi: "",
-  //     Road: "",
-  //     Subdistrict: "",
-  //     District: "",
-  //     Province: "",
-  //     ZipCode: "",
-  //   },
-  //   IDCard: "",
-  //   wantToBeSeller: "",
-  // };
+  const defaultValues = {
+    Title: "",
+    Firstname: "",
+    LastName: "",
+    UserName: "",
+    Password: "",
+    Email: "",
+    Birthday: "",
+    Tel: "",
+    Address: {
+      HomeNo: "",
+      Soi: "",
+      Road: "",
+      Subdistrict: "",
+      District: "",
+      Province: "",
+      ZipCode: "",
+    },
+    IDCard: "",
+    wantToBeSeller: "",
+  };
+  const [formValues, setFormValues] = useState(defaultValues);
+  const [formErrors, setFormErrors] = useState({});
+  const [isSubmit, setIsSubmit] = useState(false);
 
-  const firstnameRef = useRef();
-  const userRef = useRef();
-  const errRef = useRef();
+  const [comfirmPassword, setConfirmPassword] = useState("");
 
-  const [prefix, setPrefix] = useState("");
+  const handleChange = (e) => {
+    // console.log(e.target);
+    const { name, value } = e.target;
+    setFormValues({ ...formValues, [name]: value });
+    console.log(formValues);
+  };
 
-  const [firstname, setFirstname] = useState("");
-  const [validFirstName, setValidFirstName] = useState(false);
-  const [firstnameFocus, setFirstnameFocus] = useState(false);
-
-  const [lastname, setLastname] = useState("");
-  const [id, setID] = useState("");
-  const [email, setEmail] = useState("");
-
-  const [user, setUser] = useState("");
-  const [validName, setValidName] = useState(false);
-  const [userFocus, setUserFocus] = useState(false);
-
-  const [pwd, setPwd] = useState("");
-  const [conPwd, setConPwd] = useState("");
-
-  const [phone, setPhone] = useState("");
-  const [birth, setBirth] = useState("");
-
-  const [no, setNo] = useState("");
-  const [soi, setSoi] = useState("");
-  const [road, setRoad] = useState("");
-  const [subdistrict, SetSubdistrict] = useState("");
-  const [district, setDistrict] = useState("");
-  const [province, setProvince] = useState("");
-  const [zipcode, setZipcode] = useState("");
-  const [rolesell, setRolesell] = useState(false);
-  const [URLImage, setURLImage] = useState("");
-  const [success, setSuccess] = useState(false);
-
-  // useEffect(() => {
-  //   firstnameRef.current.focus();
-  // }, []);
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setFormErrors(validate(formValues));
+    setIsSubmit(true);
+  };
 
   useEffect(() => {
-    const result = firstname_REGEX.test(user);
-    console.log(result);
-    console.log(firstname);
-    setValidFirstName(result);
-  }, [firstname]);
+    console.log(formErrors);
+    if (Object.keys(formErrors).length === 0 && isSubmit) {
+      console.log(formValues);
+    }
+  }, []);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    // console.log(e.value);
-    console.log(firstname, lastname);
-    console.log(rolesell);
-    // setPrefix("");
-    // setFirstname("");
-    // setLastname("");
-    // setSuccess(true);
+  const validate = (values) => {
+    const errors = {};
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i;
+    if (!values.Title) {
+      errors.Title = "กรุณาเลือกคำนำหน้าชื่อ";
+    }
+    if (!values.Firstname) {
+      errors.Firstname = "กรุณากรอกชื่อ";
+    }
+    if (!values.LastName) {
+      errors.LastName = "กรุณากรอกนามสกุล";
+    }
+    if (!values.UserName) {
+      errors.UserName = "กรุณากรอกชื่อผู้ใช้";
+    }
+    if (!values.email) {
+      errors.email = "กรุณากรอกอีเมล";
+    } else if (!regex.test(values.email)) {
+      errors.email = "ไม่ตรงตามรูปแบบ";
+    }
+    if (!values.password) {
+      errors.password = "กรุณากรอกรหัสผ่าน";
+    } else if (values.password.length < 4) {
+      errors.password = "Password must be more than 4 characters";
+    } else if (values.password.length > 10) {
+      errors.password = "Password cannot exceed more than 10 characters";
+    }
+
+    if (!values.IDCard) {
+      errors.IDCard = "กรุณากรอกเลขบัตรประชาชน";
+    }
+    if (!values.Birthday) {
+      errors.Birthday = "กรุณาเลือกวัน เดือน ปีเกิด";
+    }
+    if (!values.UserName) {
+      errors.UserName = "กรุณากรอกชื่อผู้ใช้";
+    }
+    return errors;
   };
 
   return (
@@ -101,364 +97,343 @@ const Register = () => {
         <div className="mt-2 text-xl font-medium text-center">
           กรอกข้อมูลด้านล่างเพื่อเข้าร่วมเป็นสมาชิก
         </div>
+        <div className="flex flex-col p-8 m-8 bg-white w-[600px] sm:min-w-[400px] min-w-[300px]  rounded-xl shadow-xl">
+          <h1 className="text-xl font-bold mb-2">สร้างบัญชีของคุณ</h1>
+          <h2 className="text-lg mb-4 text-[#E54E3D]">ข้อมูลส่วนตัว</h2>
+          {Object.keys(formErrors).length === 0 && isSubmit ? (
+            <div>Signup successfully</div>
+          ) : (
+            <pre>{JSON.stringify(formValues, undefined, 2)}</pre>
+          )}
+          <form onSubmit={handleSubmit}>
+            <label
+              className="block text-gray-darker text-md font-bold mb-2"
+              htmlFor="Title"
+            >
+              คำนำหน้าชื่อ
+            </label>
 
-        {success ? (
-          <section>
-            <h1>You are signed up!</h1>
-            <br />
-            <p>
-              <a href="/">Go to Home</a>
-            </p>
-          </section>
-        ) : (
-          <div className="flex flex-col p-8 m-8 bg-white w-[600px] sm:min-w-[400px] min-w-[300px]  rounded-xl shadow-xl">
-            {/* <p
-            ref={errRef}
-            className={errMsg ? "errmsg" : "offscreen"}
-            aria-live="assertive"
-          >
-            {errMsg}
-          </p> */}
+            <select
+              className="border border-gray-300 rounded text-gray-600 h-10 pl-5 pr-10 bg-white hover:border-gray-400 focus:outline-none appearance-none"
+              name="Title"
+              value={formValues.Title}
+              onChange={handleChange}
+            >
+              <option value="">เลือกคำนำหน้าชื่อ</option>
+              <option value="Mr">นาย</option>
+              <option value="Mrs">นาง</option>
+              <option value="Miss">นางสาว</option>
+            </select>
+            <p className="text-red-600">{formErrors.Title}</p>
 
-            <h1 className="text-xl font-bold mb-2">สร้างบัญชีของคุณ</h1>
-            <h2 className="text-lg mb-4 text-[#E54E3D]">ข้อมูลส่วนตัว</h2>
+            <div className=" flex-col grid grid-cols-2 gap-9">
+              <div className="flex flex-col">
+                <label
+                  className="block text-gray-darker text-md font-bold mt-4 mb-2"
+                  htmlFor="Firstname"
+                >
+                  ชื่อ
+                </label>
+                <input
+                  class="shadow appearance-none border rounded py-2 px-3 text-grey-darker"
+                  name="Firstname"
+                  type="text"
+                  placeholder="Firstname"
+                  value={formValues.Firstname}
+                  onChange={handleChange}
+                ></input>
+                <p className="text-red-600">{formErrors.Firstname}</p>
+              </div>
 
-            <form onSubmit={handleSubmit}>
+              <div className="flex flex-col">
+                <label
+                  className="block text-gray-darker text-md font-bold mt-4 mb-2"
+                  htmlFor="LastName"
+                >
+                  นามสกุล
+                </label>
+                <input
+                  class="shadow appearance-none border rounded py-2 px-3 text-grey-darker"
+                  name="LastName"
+                  type="text"
+                  placeholder="LastName"
+                  value={formValues.LastName}
+                  onChange={handleChange}
+                ></input>
+                <p className="text-red-600">{formErrors.LastName}</p>
+              </div>
+            </div>
+
+            <label
+              className="block text-gray-darker text-md font-bold mt-4 mb-2"
+              htmlFor="IDCard"
+            >
+              เลขประจำตัวประชาชน
+            </label>
+            <input
+              class="shadow appearance-none border w-full rounded py-2 px-3 text-grey-darker"
+              name="IDCard"
+              type="text"
+              placeholder="Personal ID"
+              value={formValues.IDCard}
+              onChange={handleChange}
+            ></input>
+            <p className="text-red-600">{formErrors.IDCard}</p>
+            <label
+              className="block text-gray-darker text-md font-bold mt-4 mb-2"
+              htmlFor="Birthday"
+            >
+              วัน-เดือน-ปีเกิด
+            </label>
+            <input
+              className="border border-gray-300 rounded text-gray-600 h-10 pl-5 pr-10 bg-white hover:border-gray-400 focus:outline-none appearance-none"
+              name="Birthday"
+              type="date"
+              placeholder="Select Birthday"
+              value={formValues.Birthday}
+              onChange={handleChange}
+            />
+            <p className="text-red-600">{formErrors.Birthday}</p>
+
+            <label
+              className="block text-gray-darker text-md font-bold mt-4 mb-2"
+              htmlFor="Email"
+            >
+              อีเมล
+            </label>
+            <input
+              class="shadow appearance-none border w-full rounded py-2 px-3 text-grey-darker"
+              name="Email"
+              type="text"
+              placeholder="Email"
+              value={formValues.Email}
+              onChange={handleChange}
+            ></input>
+            <p className="text-red-600">{formErrors.Email}</p>
+            <label
+              className="block text-gray-darker text-md font-bold mt-4 mb-2"
+              htmlFfor="UserName"
+            >
+              ชื่อผู้ใช้
+            </label>
+            <input
+              class="shadow appearance-none border w-full rounded py-2 px-3 text-grey-darker"
+              name="UserName"
+              type="text"
+              placeholder="UserName"
+              value={formValues.UserName}
+              onChange={handleChange}
+            ></input>
+            {/* <p className="text-red-600">{formErrors.UserName}</p> */}
+            <label
+              className="block text-gray-darker text-md font-bold mt-4 mb-2"
+              htmlfor="Password"
+            >
+              รหัสผ่าน
+            </label>
+            <input
+              class="shadow appearance-none border rounded w-full py-2 px-3 text-grey-darker"
+              name="Password"
+              type="Password"
+              placeholder="Password"
+              value={formValues.Password}
+              onChange={handleChange}
+            ></input>
+            {/* <p className="text-red-600">{formErrors.Password}</p> */}
+            <label
+              className="block text-gray-darker text-md font-bold mt-4 mb-2"
+              htmlFor="comfirmPassword"
+            >
+              ยืนยันรหัสผ่าน
+            </label>
+            <input
+              class="shadow appearance-none border rounded w-full py-2 px-3 text-grey-darker"
+              id="confirmPassword"
+              type="password"
+              placeholder="Confirm Password"
+              value={comfirmPassword} ////////////////////////////
+              onChange={handleChange}
+            ></input>
+            {/* <p className="text-red-600">{formErrors.comfirmPassword}</p> */}
+            <label
+              className="block text-gray-darker text-md font-bold mt-4 mb-2"
+              htmlFor="Tel"
+            >
+              เบอร์โทรศัพท์
+            </label>
+            <input
+              class="shadow appearance-none border rounded w-full py-2 px-3 text-grey-darker"
+              name="Tel"
+              type="tel"
+              placeholder="Phone Number"
+              value={formValues.Tel}
+              onChange={handleChange}
+            ></input>
+            {/* <p className="text-red-600">{formErrors.Tel}</p> */}
+
+            <h2 className="text-lg mt-8 mb-4 text-[#E54E3D]">ที่อยู่</h2>
+            <div className="grid grid-cols-6 ">
               <label
-                className="block text-gray-darker text-md font-bold mb-2"
-                for="prefix"
+                className="block text-gray-darker text-md font-bold mt-4 mb-2"
+                htmlFor="HomeNo"
               >
-                คำนำหน้าชื่อ
+                บ้านเลขที่
               </label>
-              <select
-                className="border border-gray-300 rounded text-gray-600 h-10 pl-5 pr-10 bg-white hover:border-gray-400 focus:outline-none appearance-none"
-                id="prefix"
-                onChange={(e) => setPrefix(e.target.value)}
-                value={prefix}
+
+              <input
+                class="shadow appearance-none border rounded w-full py-2 px-3 text-grey-darker"
+                name="HomeNo"
+                type="text"
+                placeholder="No."
+                value={formValues.Address.HomeNo}
+                onChange={handleChange}
+              ></input>
+              {/* <p className="text-red-600">{formErrors.Address.HomeNo}</p> */}
+
+              <label
+                className="block text-gray-darker text-md font-bold text-center mt-4 mb-2"
+                for="Soi"
               >
-                <option value="select">เลือกคำนำหน้าชื่อ</option>
-                <option value="Mr">นาย</option>
-                <option value="Ms">นาง</option>
-                <option value="Miss">นางสาว</option>
-              </select>
-              <div className=" flex-col grid grid-cols-2 gap-9">
-                <div className="flex flex-col">
-                  <label
-                    className="block text-gray-darker text-md font-bold mt-4 mb-2"
-                    for="firstname"
-                  >
-                    ชื่อ
-                  </label>
+                ซอย
+              </label>
+
+              <input
+                class="shadow appearance-none border rounded w-full py-2 px-3 text-grey-darker"
+                name="Soi"
+                type="text"
+                placeholder="Soi"
+                value={formValues.Address.Soi}
+                onChange={handleChange}
+              ></input>
+              {/* <p className="text-red-600">{formErrors.Address.Soi}</p> */}
+              <label
+                className="block text-gray-darker text-md font-bold text-center mt-4 mb-2"
+                htmlFor="Road"
+              >
+                ถนน
+              </label>
+
+              <input
+                class="shadow appearance-none border rounded w-full py-2 px-3 text-grey-darker"
+                name="Road"
+                type="text"
+                placeholder="Road"
+                value={formValues.Address.Road}
+                onChange={handleChange}
+              ></input>
+              {/* <p className="text-red-600">{formErrors.Address.Road}</p> */}
+            </div>
+
+            <div className="grid grid-cols-4 mt-4 ">
+              <label
+                className="block text-gray-darker text-md font-bold mt-4 mb-2"
+                htmlFor="Subdistrict"
+              >
+                แขวง/ตำบล
+              </label>
+
+              <input
+                class="shadow appearance-none border rounded w-full py-2 px-3 text-grey-darker"
+                name="Subdistrict"
+                type="text"
+                placeholder="Sub District"
+                value={formValues.Address.Subdistrict}
+                onChange={handleChange}
+              ></input>
+              {/* <p className="text-red-600">{formErrors.Address.Subdistrict}</p> */}
+              <label
+                className="block text-gray-darker text-md font-bold text-center mt-4 mb-2"
+                htmlFor="District"
+              >
+                เขต/อำเภอ
+              </label>
+
+              <input
+                class="shadow appearance-none border rounded w-full py-2 px-3 text-grey-darker"
+                name="District"
+                type="text"
+                placeholder="District"
+                value={formValues.Address.District}
+                onChange={handleChange}
+              ></input>
+            </div>
+            {/* <p className="text-red-600">{formErrors.Address.District}</p> */}
+            <div className="grid grid-cols-4 mt-4 ">
+              <label
+                className="block text-gray-darker text-md font-bold mt-4 mb-2"
+                for="Province"
+              >
+                จังหวัด
+              </label>
+
+              <input
+                class="shadow appearance-none border rounded w-full py-2 px-3 text-grey-darker"
+                name="Province"
+                type="text"
+                placeholder="Province"
+                value={formValues.Address.Province}
+                onChange={handleChange}
+              ></input>
+              {/* <p className="text-red-600">{formErrors.Address.Province}</p> */}
+              <label
+                className="block text-gray-darker text-md font-bold text-center mt-4 mb-2"
+                htmlFor="ZipCode"
+              >
+                รหัสไปรษณีย์
+              </label>
+
+              <input
+                class="shadow appearance-none border rounded w-full py-2 px-3 text-grey-darker"
+                name="ZipCode"
+                type="text"
+                placeholder="Zip Code"
+                value={formValues.Address.ZipCode}
+                onChange={handleChange}
+              ></input>
+              {/* <p className="text-red-600">{formErrors.Address.ZipCode}</p> */}
+            </div>
+
+            <div className="block">
+              <div className="mt-5">
+                <label className="inline-flex items-center">
                   <input
-                    class="shadow appearance-none border rounded py-2 px-3 text-grey-darker"
-                    id="firstname"
-                    type="text"
-                    placeholder="Firstname"
-                    onChange={(e) => setFirstname(e.target.value)}
-                    value={firstname}
-                  ></input>
-                </div>
-
-                <div className="flex flex-col">
-                  <label
-                    className="block text-gray-darker text-md font-bold mt-4 mb-2"
-                    for="lastname"
-                  >
-                    นามสกุล
-                  </label>
-                  <input
-                    class="shadow appearance-none border rounded py-2 px-3 text-grey-darker"
-                    id="lastname"
-                    type="text"
-                    placeholder="Lastname"
-                    onChange={(e) => setLastname(e.target.value)}
-                    value={lastname}
-                  ></input>
-                </div>
+                    name="wantToBeSeller"
+                    type="checkbox"
+                    class="w-6 h-6 rounded"
+                    value={formValues.wantToBeSeller}
+                    onChange={handleChange}
+                  />
+                  <span className="text-gray-darker text-md font-bold ml-2">
+                    ต้องการเป็นผู้ขาย
+                  </span>
+                </label>
               </div>
-              <label
-                className="block text-gray-darker text-md font-bold mt-4 mb-2"
-                for="id"
+            </div>
+
+            <div className="mt-4 mb-7">
+              <button
+                type="submit"
+                className="w-full inline-flex items-center justify-center px-4 py-2 bg-[#E54E3D] border border-transparent rounded-md font-semibold capitalize text-white hover:bg-red-700 active:bg-red-700 focus:outline-none focus:border-red-700 focus:ring focus:ring-red-200 disabled:opacity-25 transition"
               >
-                เลขประจำตัวประชาขน
-              </label>
-              <input
-                class="shadow appearance-none border w-full rounded py-2 px-3 text-grey-darker"
-                id="id"
-                type="text"
-                placeholder="Personal ID"
-                onChange={(e) => setID(e.target.value)}
-                value={id}
-              ></input>
-
-              <label
-                className="block text-gray-darker text-md font-bold mt-4 mb-2"
-                for="birth"
-              >
-                วัน-เดือน-ปีเกิด
-              </label>
-
-              <input
-                className="flatpickr js-flatpickr-date border border-gray-300 rounded text-gray-600 h-10 pl-5 pr-10 bg-white hover:border-gray-400 focus:outline-none appearance-none"
-                id="birth"
-                type="date"
-                placeholder="Select Birthday"
-                onChange={(e) => setBirth(e.target.value)}
-                value={birth}
-              />
-              <label
-                className="block text-gray-darker text-md font-bold mt-4 mb-2"
-                for="email"
-              >
-                อีเมล
-              </label>
-              <input
-                class="shadow appearance-none border w-full rounded py-2 px-3 text-grey-darker"
-                id="email"
-                type="text"
-                placeholder="Email"
-                onChange={(e) => setEmail(e.target.value)}
-                value={email}
-              ></input>
-              <label
-                className="block text-gray-darker text-md font-bold mt-4 mb-2"
-                for="username"
-              >
-                ชื่อผู้ใช้
-              </label>
-              <input
-                class="shadow appearance-none border w-full rounded py-2 px-3 text-grey-darker"
-                id="username"
-                type="text"
-                placeholder="Username"
-                onChange={(e) => setUser(e.target.value)}
-                value={user}
-              ></input>
-              <label
-                className="block text-gray-darker text-md font-bold mt-4 mb-2"
-                for="password"
-              >
-                รหัสผ่าน
-              </label>
-              <input
-                class="shadow appearance-none border rounded w-full py-2 px-3 text-grey-darker"
-                id="password"
-                type="password"
-                placeholder="Password"
-                onChange={(e) => setPwd(e.target.value)}
-                value={pwd}
-              ></input>
-              <label
-                className="block text-gray-darker text-md font-bold mt-4 mb-2"
-                for="comfirmpass"
-              >
-                ยืนยันรหัสผ่าน
-              </label>
-              <input
-                class="shadow appearance-none border rounded w-full py-2 px-3 text-grey-darker"
-                id="confirmpass"
-                type="text"
-                placeholder="Confirm Password"
-                onChange={(e) => setConPwd(e.target.value)}
-                value={conPwd}
-              ></input>
-              <label
-                className="block text-gray-darker text-md font-bold mt-4 mb-2"
-                for="phone"
-              >
-                เบอร์โทรศัพท์
-              </label>
-              <input
-                class="shadow appearance-none border rounded w-full py-2 px-3 text-grey-darker"
-                id="phone"
-                type="text"
-                placeholder="Phone Number"
-                onChange={(e) => setPhone(e.target.value)}
-                value={phone}
-              ></input>
-              <h2 className="text-lg mt-8 mb-4 text-[#E54E3D]">ที่อยู่</h2>
-              <div className="grid grid-cols-6 ">
-                <label
-                  className="block text-gray-darker text-md font-bold mt-4 mb-2"
-                  for="number"
-                >
-                  บ้านเลขที่
-                </label>
-
-                <input
-                  class="shadow appearance-none border rounded w-full py-2 px-3 text-grey-darker"
-                  id="number"
-                  type="text"
-                  placeholder="No."
-                  onChange={(e) => setNo(e.target.value)}
-                  value={no}
-                ></input>
-
-                <label
-                  className="block text-gray-darker text-md font-bold text-center mt-4 mb-2"
-                  for="sol"
-                >
-                  ซอย
-                </label>
-
-                <input
-                  class="shadow appearance-none border rounded w-full py-2 px-3 text-grey-darker"
-                  id="sol"
-                  type="text"
-                  placeholder="Sol"
-                  onChange={(e) => setSoi(e.target.value)}
-                  value={soi}
-                ></input>
-
-                <label
-                  className="block text-gray-darker text-md font-bold text-center mt-4 mb-2"
-                  for="road"
-                >
-                  ถนน
-                </label>
-
-                <input
-                  class="shadow appearance-none border rounded w-full py-2 px-3 text-grey-darker"
-                  id="road"
-                  type="text"
-                  placeholder="Road"
-                  onChange={(e) => setRoad(e.target.value)}
-                  value={road}
-                ></input>
-              </div>
-              <div className="grid grid-cols-4 mt-4 ">
-                <label
-                  className="block text-gray-darker text-md font-bold mt-4 mb-2"
-                  for="subdistrict"
-                >
-                  แขวง/ตำบล
-                </label>
-
-                <input
-                  class="shadow appearance-none border rounded w-full py-2 px-3 text-grey-darker"
-                  id="subdistrict"
-                  type="text"
-                  placeholder="Sub District"
-                  onChange={(e) => SetSubdistrict(e.target.value)}
-                  value={subdistrict}
-                ></input>
-
-                <label
-                  className="block text-gray-darker text-md font-bold text-center mt-4 mb-2"
-                  for="district"
-                >
-                  เขต/อำเภอ
-                </label>
-
-                <input
-                  class="shadow appearance-none border rounded w-full py-2 px-3 text-grey-darker"
-                  id="district"
-                  type="text"
-                  placeholder="District"
-                  onChange={(e) => setDistrict(e.target.value)}
-                  value={district}
-                ></input>
-              </div>
-              <div className="grid grid-cols-4 mt-4 ">
-                <label
-                  className="block text-gray-darker text-md font-bold mt-4 mb-2"
-                  for="province"
-                >
-                  จังหวัด
-                </label>
-
-                <input
-                  class="shadow appearance-none border rounded w-full py-2 px-3 text-grey-darker"
-                  id="province"
-                  type="text"
-                  placeholder="Province"
-                  onChange={(e) => setProvince(e.target.value)}
-                  value={province}
-                ></input>
-
-                <label
-                  className="block text-gray-darker text-md font-bold text-center mt-4 mb-2"
-                  for="zipcode"
-                >
-                  รหัสไปรษณีย์
-                </label>
-
-                <input
-                  class="shadow appearance-none border rounded w-full py-2 px-3 text-grey-darker"
-                  id="zipcode"
-                  type="text"
-                  placeholder="Zip Code"
-                  onChange={(e) => setZipcode(e.target.value)}
-                  value={zipcode}
-                ></input>
-              </div>
-              <div className="block">
-                <div className="mt-5">
-                  <label className="inline-flex items-center">
-                    <input
-                      type="checkbox"
-                      className="w-6 h-6 rounded"
-                      onChange={(e) => setRolesell(e.target.checked)}
-                      value={rolesell}
-                    />
-                    <span className="text-gray-darker text-md font-bold ml-2">
-                      ต้องการเป็นผู้ขาย
-                    </span>
-                  </label>
-                </div>
-              </div>
-
-              <div class="m-2">
-                <label class="inline-block mb-2 text-gray-darker">
-                  บัตรผู้ซื้อ-จองล่วงหน้าสลากกินแบ่งรัฐบาล
-                </label>
-                <div class="flex items-center justify-center w-full">
-                  <label class="flex flex-col w-full h-32 border-4 border-blue-200 border-dashed hover:bg-gray-100 hover:border-gray-300">
-                    <div class="flex flex-col items-center justify-center pt-7">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        class="w-8 h-8 text-gray-400 group-hover:text-gray-600"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          stroke-width="2"
-                          d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
-                        />
-                      </svg>
-                      <p class="pt-1 text-sm tracking-wider text-gray-400 group-hover:text-gray-600">
-                        อัพโหลดไฟล์
-                      </p>
-                    </div>
-                    <input
-                      type="file"
-                      class="opacity-0"
-                      onChange={(e) => setURLImage(e.target.value)}
-                      value={URLImage}
-                    />
-                  </label>
-                </div>
-              </div>
-
-              <div className="mt-4 mb-7">
-                <button className="w-full inline-flex items-center justify-center px-4 py-2 bg-[#E54E3D] border border-transparent rounded-md font-semibold capitalize text-white hover:bg-red-700 active:bg-red-700 focus:outline-none focus:border-red-700 focus:ring focus:ring-red-200 disabled:opacity-25 transition">
-                  ยืนยัน
-                </button>
-              </div>
-            </form>
-
-            <div className="mb-7">
-              <button className="w-full p-10 py-2 px-4 border-2 border-[#E54E3D] rounded text-[#E54E3D] hover:bg-[#E54E3D] hover:text-white transition duration-300">
-                ยกเลิก และ กลับสู่หน้าหลัก
+                ยืนยัน
               </button>
             </div>
+          </form>
+
+          <div className="mb-7">
+            <button className="w-full p-10 py-2 px-4 border-2 border-[#E54E3D] rounded text-[#E54E3D] hover:bg-[#E54E3D] hover:text-white transition duration-300">
+              ยกเลิก และ กลับสู่หน้าหลัก
+            </button>
           </div>
-        )}
+        </div>
       </div>
     </div>
+    // <form onSubmit={handleSubmit(onSubmit)}>
+    //   <input {...register("Firstname", { required: true, maxLength: 20 })} />
+    //   <input {...register("LastName", { pattern: /^[A-Za-z]+$/i })} />
+    //   <input type="number" {...register("age", { min: 18, max: 99 })} />
+    //   <input type="submit" />
+    // </form>
   );
 };
 
