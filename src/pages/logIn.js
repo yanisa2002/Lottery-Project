@@ -105,6 +105,7 @@ const LogIn = () => {
                 ref={userRef}
                 placeholder="Username"
                 autoComplete="off"
+                pattern="[A-Za-z0-9]{4,20}"
                 onChange={(e) => setUser(e.target.value)}
                 value={user}
                 reduired
