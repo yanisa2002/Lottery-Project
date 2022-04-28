@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-
+import axios from "axios";
+import jwt_decode from "jwt-decode";
 const Random = () => {
   const [random, setRandom] = useState("");
   const [success, setSuccess] = useState(false);
@@ -7,10 +8,30 @@ const Random = () => {
   const defaultValues = {
     Amount: random,
   };
-
+  const token =
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImhlbGxvbGVlIiwicm9sZSI6ImN1c3RvbWVyIiwiaWF0IjoxNjUxMDk1MDY5LCJleHAiOjE2NTExMDU4Njl9.zZTFWwlN6yIPsi6UAETNHnsminyO6h4jjsazH4j0fa4";
+  const Random = () => {
+    axios
+      .post("http://2561-2a09-bac0-411-00-81e-ea19.ngrok.io/login", {
+        token: token,
+        Amount: defaultValues.Amount,
+      })
+      .then(function (response) {
+        if (response.data.status === "200OK") {
+          localStorage.setItem("token", response.data.token);
+          const decoded = jwt_decode(response.data.token);
+          const { username, role } = decoded;
+          console.log(response);
+        }
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  };
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log(defaultValues);
+    Random();
   };
 
   return (
