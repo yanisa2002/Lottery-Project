@@ -1,6 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
+import Noti from "../components/popNoti";
 
-const Notification = () => {
+const Notification = (noti_props) => {
+  const [checkStatus, setCheckStatus] = useState("");
   return (
     <div className="h-screen flex justify-center  bg-[#FFE5A3] font-prompt">
       <div
