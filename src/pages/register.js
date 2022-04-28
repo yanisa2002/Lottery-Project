@@ -175,14 +175,18 @@ const Register = () => {
     if (!values.Password === undefined) {
       errors["Password"] = "กรุณากรอกรหัสผ่าน";
     } else if (values.Password.length < 8) {
-      errors["Password"] = "ชื่อผู้ใช้ต้องมี 8 ตัวอักษรขึ้นไป";
+      errors["Password"] = "รหัสผ่านต้องมี 8 ตัวอักษรขึ้นไป";
     } else if (values.Password.length > 24) {
-      errors["Password"] = "ชื่อผู้ใช้ต้องมีไม่เกิน 24 ตัวอักษร";
+      errors["Password"] = "รหัสผ่านต้องมีไม่เกิน 24 ตัวอักษร";
     }
     if (!values.Tel === undefined) {
       errors["Tel"] = "กรุณากรอกเบอร์โทรศัพท์";
     } else if (values.Tel.length !== 10) {
       errors["Tel"] = "กรุณากรอกเบอร์โทรศัพท์ใหครบ 10 หลัก";
+    }
+
+    if (values.confirmPassword !== values.Password) {
+      errors["comfirmPassword"] = "รหัสผ่านไม่ตรงกัน";
     }
     console.log("error -> ", errors);
     return errors;
@@ -346,7 +350,7 @@ const Register = () => {
               value={comfirmPassword} ////////////////////////////
               onChange={(event) => setConfirmPassword(event.target.value)}
             ></input>
-            {/* <p className="text-red-600">{formErrors.comfirmPassword}</p> */}
+            <p className="text-red-600">{formErrors.comfirmPassword}</p>
             <label
               className="block text-gray-darker text-md font-bold mt-4 mb-2"
               htmlFor="Tel"
@@ -364,6 +368,7 @@ const Register = () => {
             ></input>
             <p className="text-red-600">{formErrors.Tel}</p>
             <h2 className="text-lg mt-8 mb-4 text-[#E54E3D]">ที่อยู่</h2>
+            <p className="text-red-600">{formErrors.homeNo}</p>
             <div className="grid grid-cols-6 ">
               <label
                 className="block text-gray-darker text-md font-bold mt-4 mb-2"
@@ -380,7 +385,6 @@ const Register = () => {
                 value={homeNo}
                 onChange={(event) => setHomeNo(event.target.value)}
               ></input>
-              {/* <p className="text-red-600">{formErrors.Address.HomeNo}</p> */}
 
               <label
                 className="block text-gray-darker text-md font-bold text-center mt-4 mb-2"
