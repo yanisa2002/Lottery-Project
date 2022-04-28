@@ -4,17 +4,6 @@ import axios from "axios";
 import jwt_decode from "jwt-decode";
 
 const Register = () => {
-  // const [address, setAddress] = useState({
-  //   HomeNo: "",
-  //   Soi: "",
-  //   Road: "jim",
-  //   Subdistrict: "",
-  //   District: "",
-  //   Province: "",
-  //   ZipCode: "",
-  // });
-
-  // const [formValues, setFormValues] = useState(defaultValues);
   const [formErrors, setFormErrors] = useState({});
   const [isSubmit, setIsSubmit] = useState(false);
 
@@ -41,6 +30,21 @@ const Register = () => {
   const [comfirmPassword, setConfirmPassword] = useState("");
   let beSell = wantToBeSeller === true ? "Yes" : "No";
   let addRole = beSell === "Yes" ? "seller" : "customer";
+
+  const content =
+    beSell === "Yes" ? (
+      <div class="m-2">
+        <label class="inline-block mb-2 text-gray-darker">
+          บัตรผู้ซื้อ-จองล่วงหน้าสลากกินแบ่งรัฐบาล
+        </label>
+        <input
+          type="file"
+          value={urlImage}
+          onChange={(e) => seturlImage(e.target.value)}
+        />
+      </div>
+    ) : null;
+
   let defaultValues = {
     Title: title,
     Firstname: firstname,
@@ -58,12 +62,6 @@ const Register = () => {
       District: district,
       Province: province,
       ZipCode: zipCode,
-      //   // Soi: address.Soi,
-      //   // Road: address.Road,
-      //   // Subdistrict: address.Subdistrict,
-      //   // District: address.District,
-      //   // Province: address.Province,
-      //   // ZipCode: address.ZipCode,
     },
     IDCard: idCard,
     URLImage: urlImage,
@@ -115,20 +113,6 @@ const Register = () => {
         console.log(error);
       });
   };
-  // const handleChange = (e) => {
-  //   console.log(e.target);
-  //   const { name, value } = e.target;
-  //   setFormValues({ ...formValues, [name]: value });
-  //   console.log(defaultValues);
-  // };
-
-  // const handleChangeAdd = (e) => {
-  //   // console.log(e.target);
-  //   const { name, value } = e.target;
-  //   setAddress({ ...address, [name]: value });
-  //   console.log("ลุงพล", address);
-  //   defaultValues["Address"] = address;
-  // };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -216,12 +200,6 @@ const Register = () => {
         <div className="flex flex-col p-8 m-8 bg-white w-[600px] sm:min-w-[400px] min-w-[300px]  rounded-xl shadow-xl">
           <h1 className="text-xl font-bold mb-2">สร้างบัญชีของคุณ</h1>
           <h2 className="text-lg mb-4 text-[#E54E3D]">ข้อมูลส่วนตัว</h2>
-          {/* {Object.keys(formErrors).length === 0 && isSubmit ? (
-            <div>Signup successfully</div>
-          ) : (
-            <pre>{JSON.stringify(formValues, undefined, 2)}</pre>
-          )} */}
-          {/* <pre>{JSON.stringify(formValues, undefined, 2)}</pre> */}
           <form onSubmit={handleSubmit}>
             <label
               className="block text-gray-darker text-md font-bold mb-2"
@@ -514,7 +492,6 @@ const Register = () => {
                     type="checkbox"
                     class="w-6 h-6 rounded"
                     checked={wantToBeSeller}
-                    // value={wantToBeSeller}
                     onChange={(event) =>
                       setWantToBeSeller(event.target.checked)
                     }
@@ -526,40 +503,7 @@ const Register = () => {
               </div>
             </div>
 
-            <div class="m-2">
-              <label class="inline-block mb-2 text-gray-darker">
-                บัตรผู้ซื้อ-จองล่วงหน้าสลากกินแบ่งรัฐบาล
-              </label>
-              <div class="flex items-center justify-center w-full">
-                <label class="flex flex-col w-full h-32 border-4 border-blue-200 border-dashed hover:bg-gray-100 hover:border-gray-300">
-                  <div class="flex flex-col items-center justify-center pt-7">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      class="w-8 h-8 text-gray-400 group-hover:text-gray-600"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
-                      />
-                    </svg>
-                    <p class="pt-1 text-sm tracking-wider text-gray-400 group-hover:text-gray-600">
-                      อัพโหลดไฟล์
-                    </p>
-                  </div>
-                  <input
-                    type="file"
-                    class="opacity-0"
-                    value={urlImage}
-                    onChange={(e) => seturlImage(e.target.value)}
-                  />
-                </label>
-              </div>
-            </div>
+            {content}
 
             <div className="mt-4 mb-7">
               <button
