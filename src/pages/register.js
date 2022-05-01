@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useEffect, useCallback } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import jwt_decode from "jwt-decode";
 
@@ -10,8 +10,8 @@ const Register = () => {
   const [title, setTitle] = useState("");
   const [firstname, setFirstname] = useState("");
   const [lastname, setLastname] = useState("");
-  const [UserName, setUserName] = useState("");
-  const [Password, setPassword] = useState("");
+  const [username, setUserName] = useState("");
+  const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
   const [birthday, setBirthday] = useState("");
   const [tel, setTel] = useState("");
@@ -24,10 +24,9 @@ const Register = () => {
   const [zipCode, setZipCode] = useState("");
   const [idCard, setIDCard] = useState("");
   const [urlImage, seturlImage] = useState("");
-  const [role, setRole] = useState("");
   const [wantToBeSeller, setWantToBeSeller] = useState("");
 
-  const [comfirmPassword, setConfirmPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   let beSell = wantToBeSeller === true ? "Yes" : "No";
   let addRole = beSell === "Yes" ? "seller" : "customer";
 
@@ -49,8 +48,8 @@ const Register = () => {
     Title: title,
     Firstname: firstname,
     Lastname: lastname,
-    Username: UserName,
-    Password: Password,
+    Username: username,
+    Password: password,
     Email: email,
     Birthday: birthday,
     Tel: tel,
@@ -68,57 +67,65 @@ const Register = () => {
     Role: addRole,
     wantToBeSeller: beSell,
   };
-  let errors = {};
-  const Register = () => {
-    axios
-      .post("http://2561-2a09-bac0-411-00-81e-ea19.ngrok.io/register", {
-        Title: defaultValues.Title,
-        Firstname: defaultValues.Firstname,
-        Lastname: defaultValues.Lastname,
-        Username: defaultValues.Username,
-        Password: defaultValues.Password,
-        Email: defaultValues.Email,
-        Birthday: defaultValues.Birthday,
-        Tel: defaultValues.Tel,
-        Address: {
-          HomeNo: defaultValues.Address.HomeNo,
-          Soi: defaultValues.Address.Soi,
-          Road: defaultValues.Address.Road,
-          Subdistrict: defaultValues.Address.Subdistrict,
-          District: defaultValues.Address.District,
-          Province: defaultValues.Address.Province,
-          ZipCode: defaultValues.Address.ZipCode,
-        },
-        IDCard: defaultValues.IDCard,
-        URLImage: defaultValues.URLImage,
-        Role: defaultValues.Role,
-        wantToBeSeller: defaultValues.wantToBeSeller,
-      })
-      .then(function (response) {
-        if (response.data.status === "200OK") {
-          localStorage.setItem("token", response.data.token);
-          const decoded = jwt_decode(response.data.token);
-          const { username, role } = decoded;
-          console.log(response);
-        } else if (response.data.status === "200US") {
-          errors["UserName"] = "ชื่อผู้ใช้นี้ถูกใช้งานแล้ว";
-        } else if (response.data.status === "200EM") {
-          errors["Email"] = "อีเมลนี้ถูกใช้งานแล้ว";
-        } else if (response.data.status === "200UE") {
-          errors["UserName"] = "ชื่อผู้ใช้นี้ถูกใช้งานแล้ว";
-          errors["Email"] = "อีเมลนี้ถูกใช้งานแล้ว";
-        }
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
-  };
+  // let errors = {};
+  // const Register = () => {
+  //   axios
+  //     .post("http://2561-2a09-bac0-411-00-81e-ea19.ngrok.io/register", {
+  //       Title: defaultValues.Title,
+  //       Firstname: defaultValues.Firstname,
+  //       Lastname: defaultValues.Lastname,
+  //       Username: defaultValues.Username,
+  //       Password: defaultValues.Password,
+  //       Email: defaultValues.Email,
+  //       Birthday: defaultValues.Birthday,
+  //       Tel: defaultValues.Tel,
+  //       Address: {
+  //         HomeNo: defaultValues.Address.HomeNo,
+  //         Soi: defaultValues.Address.Soi,
+  //         Road: defaultValues.Address.Road,
+  //         Subdistrict: defaultValues.Address.Subdistrict,
+  //         District: defaultValues.Address.District,
+  //         Province: defaultValues.Address.Province,
+  //         ZipCode: defaultValues.Address.ZipCode,
+  //       },
+  //       IDCard: defaultValues.IDCard,
+  //       URLImage: defaultValues.URLImage,
+  //       Role: defaultValues.Role,
+  //       wantToBeSeller: defaultValues.wantToBeSeller,
+  //     })
+  //     .then(function (response) {
+  //       if (response.data.status === "200OK") {
+  //         localStorage.setItem("token", response.data.token);
+  //         const decoded = jwt_decode(response.data.token);
+  //         const { username, role } = decoded;
+  //         console.log(response);
+  //       } else if (response.data.status === "200US") {
+  //         errors["UserName"] = "ชื่อผู้ใช้นี้ถูกใช้งานแล้ว";
+  //       } else if (response.data.status === "200EM") {
+  //         errors["Email"] = "อีเมลนี้ถูกใช้งานแล้ว";
+  //       } else if (response.data.status === "200UE") {
+  //         errors["UserName"] = "ชื่อผู้ใช้นี้ถูกใช้งานแล้ว";
+  //         errors["Email"] = "อีเมลนี้ถูกใช้งานแล้ว";
+  //       }
+  //     })
+  //     .catch(function (error) {
+  //       console.log(error);
+  //     });
+  // };
+
+  const navigate = useNavigate();
+  const toAccountMs = useCallback(
+    () => navigate("/", { replace: true }),
+    [navigate]
+  );
 
   const handleSubmit = (e) => {
     e.preventDefault();
     setFormErrors(validate(defaultValues));
     setIsSubmit(true);
     Register();
+
+    toAccountMs();
   };
 
   useEffect(() => {
@@ -131,62 +138,103 @@ const Register = () => {
 
   const validate = (values) => {
     console.log(values);
+    let errors = {};
     const regex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i;
     const thai_regex = /^[ก-๏]{0,31}$/;
-    if (values.Title === undefined) {
+    if (title === "") {
       errors["Title"] = "กรุณาเลือกคำนำหน้าชื่อ";
     }
-    if (values.Firstname === "") {
+    if (firstname === "") {
       errors["Firstname"] = "กรุณากรอกชื่อ";
-    } else if (!thai_regex.test(values.Firstname)) {
+    } else if (!thai_regex.test(firstname)) {
       errors["Firstname"] = "กรุณากรอกเป็นภาษาไทย";
     }
 
-    if (values.Lastname === "") {
+    if (lastname === "") {
       errors["Lastname"] = "กรุณากรอกนามสกุล";
-    } else if (!thai_regex.test(values.Lastname)) {
+    } else if (!/^[ก-๏\s]{0,31}$/.test(lastname)) {
       errors["Lastname"] = "กรุณากรอกเป็นภาษาไทย";
     }
 
-    if (values.IDCard === undefined) {
-      errors["IDCard"] = "กรุณากรอกเลขบัตรประชาชน";
-    } else if (values.IDCard.length !== 13) {
+    if (idCard === "") {
+      errors["IDCard"] = "กรุณากรอกเลขประจำตัวประชาชน";
+    } else if (!/\d{13}/.test(idCard)) {
+      errors["IDCard"] = "กรุณากรอกเป็นตัวเลข";
+    } else if (idCard.length !== 13) {
       errors["IDCard"] = "กรุณากรอกให้ครบ 13 หลัก";
     }
 
-    if (values.Birthday === undefined) {
+    if (birthday === "") {
       errors["Birthday"] = "กรุณาเลือกวัน เดือน ปีเกิด";
     }
 
-    if (values.Email === undefined) {
+    if (email === "") {
       errors["Email"] = "กรุณากรอกอีเมล";
-    } else if (!regex.test(values.Email)) {
+    } else if (!regex.test(email)) {
       errors["Email"] = "ไม่ตรงตามรูปแบบ";
     }
 
-    if (values.UserName === undefined) {
+    if (username === "") {
       errors["UserName"] = "กรุณากรอกชื่อผู้ใช้";
-    } else if (values.UserName.length < 4) {
+    } else if (!/^[A-Za-z][A-Za-z0-9_]$/.test(username)) {
+      errors["UserName"] =
+        "กรุณากรอกเฉพาะอักขระภาษาอังกฤษ หรืออักขระพิเศษที่ปรากฎบนแป้นพิมพ์";
+    } else if (username.length < 4) {
       errors["UserName"] = "ชื่อผู้ใช้ต้องมี 4 ตัวอักษรขึ้นไป";
-    } else if (values.UserName.length > 24) {
+    } else if (username.length > 24) {
       errors["UserName"] = "ชื่อผู้ใช้ต้องมีไม่เกิน 24 ตัวอักษร";
     }
 
-    if (!values.Password === undefined) {
+    if (password === "") {
       errors["Password"] = "กรุณากรอกรหัสผ่าน";
-    } else if (values.Password.length < 8) {
+    } else if (!/^[A-Z]+[a-z]+[0-9]+$/.test(password)) {
+      errors["Password"] =
+        "กรุณากรอกเฉพาะอักขระภาษาอังกฤษ หรืออักขระพิเศษที่ปรากฎบนแป้นพิมพ์";
+    } else if (password.length < 8) {
       errors["Password"] = "รหัสผ่านต้องมี 8 ตัวอักษรขึ้นไป";
-    } else if (values.Password.length > 24) {
+    } else if (password.length > 24) {
       errors["Password"] = "รหัสผ่านต้องมีไม่เกิน 24 ตัวอักษร";
     }
-    if (!values.Tel === undefined) {
+    if (tel === "") {
       errors["Tel"] = "กรุณากรอกเบอร์โทรศัพท์";
-    } else if (values.Tel.length !== 10) {
-      errors["Tel"] = "กรุณากรอกเบอร์โทรศัพท์ใหครบ 10 หลัก";
+    } else if (!/0\d{8,9}/.test(tel)) {
+      errors["Tel"] = "เบอร์โทรศัพท์เริ่มต้นที่ 0";
+    } else if (tel.length !== 10) {
+      errors["Tel"] = "กรุณากรอกเบอร์โทรศัพท์ให้ครบ 10 หลัก";
     }
 
-    if (values.confirmPassword !== values.Password) {
+    if (confirmPassword === "") {
+      errors["comfirmPassword"] = "กรุณากรอกรหัสผ่าน";
+    } else if (confirmPassword !== values.Password) {
       errors["comfirmPassword"] = "รหัสผ่านไม่ตรงกัน";
+    }
+
+    if (homeNo === "") {
+      errors["HomeNo"] = "กรุณากรอกบ้านเลขที่";
+    }
+
+    if (soi === "") {
+      errors["Soi"] = "กรุณากรอกซอย";
+    }
+
+    if (road === "") {
+      errors["Road"] = "กรุณากรอกถนน";
+    }
+
+    if (subDistrict === "") {
+      errors["SubDistrict"] = "กรุณากรอกแขวง/ตำบล";
+    }
+
+    if (district === "") {
+      errors["District"] = "กรุณากรอกเขต/อำเภอ";
+    }
+
+    if (province === "") {
+      errors["Province"] = "กรุณากรอกจังหวัด";
+    }
+
+    if (zipCode === "") {
+      errors["ZipCode"] = "กรุณากรอกรหัสไปรษณีย์";
     }
     console.log("error -> ", errors);
     return errors;
@@ -317,7 +365,7 @@ const Register = () => {
               name="UserName"
               type="text"
               placeholder="UserName"
-              value={UserName}
+              value={username}
               onChange={(event) => setUserName(event.target.value)}
             ></input>
             <p className="text-red-600">{formErrors.UserName}</p>
@@ -332,7 +380,7 @@ const Register = () => {
               name="Password"
               type="Password"
               placeholder="Password"
-              value={Password}
+              value={password}
               onChange={(event) => setPassword(event.target.value)}
             ></input>
             <p className="text-red-600">{formErrors.Password}</p>
@@ -347,7 +395,7 @@ const Register = () => {
               id="confirmPassword"
               type="password"
               placeholder="Confirm Password"
-              value={comfirmPassword} ////////////////////////////
+              value={confirmPassword} ////////////////////////////
               onChange={(event) => setConfirmPassword(event.target.value)}
             ></input>
             <p className="text-red-600">{formErrors.comfirmPassword}</p>
@@ -401,7 +449,7 @@ const Register = () => {
                 value={soi}
                 onChange={(event) => setSoi(event.target.value)}
               ></input>
-              {/* <p className="text-red-600">{formErrors.Address.Soi}</p> */}
+
               <label
                 className="block text-gray-darker text-md font-bold text-center mt-4 mb-2"
                 htmlFor="Road"
@@ -417,8 +465,18 @@ const Register = () => {
                 value={road}
                 onChange={(event) => setRoad(event.target.value)}
               ></input>
-              {/* <p className="text-red-600">{formErrors.Address.Road}</p> */}
+
+              <p className="col-span-2 text-red-600 text-right mt-1">
+                {formErrors.HomeNo}
+              </p>
+              <p className="col-span-2 text-red-600 text-right mt-1">
+                {formErrors.Soi}
+              </p>
+              <p className="col-span-2 text-red-600 text-right mt-1">
+                {formErrors.Road}
+              </p>
             </div>
+
             <div className="grid grid-cols-4 mt-4 ">
               <label
                 className="block text-gray-darker text-md font-bold mt-4 mb-2"
@@ -435,7 +493,7 @@ const Register = () => {
                 value={subDistrict}
                 onChange={(event) => setSubDistrict(event.target.value)}
               ></input>
-              {/* <p className="text-red-600">{formErrors.Address.Subdistrict}</p> */}
+
               <label
                 className="block text-gray-darker text-md font-bold text-center mt-4 mb-2"
                 htmlFor="District"
@@ -451,8 +509,15 @@ const Register = () => {
                 value={district}
                 onChange={(event) => setDistrict(event.target.value)}
               ></input>
+
+              <p className="col-span-2 text-red-600 text-right mt-1">
+                {formErrors.SubDistrict}
+              </p>
+              <p className="col-span-2 text-red-600 text-right mt-1">
+                {formErrors.District}
+              </p>
             </div>
-            {/* <p className="text-red-600">{formErrors.Address.District}</p> */}
+
             <div className="grid grid-cols-4 mt-4 ">
               <label
                 className="block text-gray-darker text-md font-bold mt-4 mb-2"
@@ -469,7 +534,7 @@ const Register = () => {
                 value={province}
                 onChange={(event) => setProvince(event.target.value)}
               ></input>
-              {/* <p className="text-red-600">{formErrors.Address.Province}</p> */}
+
               <label
                 className="block text-gray-darker text-md font-bold text-center mt-4 mb-2"
                 htmlFor="ZipCode"
@@ -486,8 +551,15 @@ const Register = () => {
                 value={zipCode}
                 onChange={(event) => setZipCode(event.target.value)}
               ></input>
-              {/* <p className="text-red-600">{formErrors.Address.ZipCode}</p> */}
+
+              <p className="col-span-2 text-red-600 text-right mt-1">
+                {formErrors.Province}
+              </p>
+              <p className="col-span-2 text-red-600 text-right mt-1">
+                {formErrors.ZipCode}
+              </p>
             </div>
+
             <div className="block">
               <div className="mt-5">
                 <label className="inline-flex items-center">
