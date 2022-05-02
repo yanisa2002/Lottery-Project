@@ -12,6 +12,8 @@ import Random from "./pages/random";
 
 function App() {
   const [isOpen, setIsOpen] = useState(false);
+  // const [countnoti, setCounnti] = useState("");
+
   const toggle = () => {
     setIsOpen(!isOpen);
   };

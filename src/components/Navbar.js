@@ -37,6 +37,7 @@ const Navbar = ({ toggle }) => {
         </Link>
         <Link className="p-4 hover:text-[#E54E3D]" to="/notification">
           การแจ้งเตือน
+          {/* <span class="bg-[#E54E3D] text-blue-800 text-sm font-semibold inline-flex items-center p-1.5 rounded-full dark:bg-blue-200 dark:text-blue-800"></span> */}
         </Link>
         <Link className="p-4 hover:text-[#E54E3D]" to="/account">
           บัญชีผู้ใช้

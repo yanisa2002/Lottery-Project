@@ -1,33 +1,42 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import jwt_decode from "jwt-decode";
+
 const Random = () => {
   const [random, setRandom] = useState("");
-  const [success, setSuccess] = useState(false);
+  const [errMsg, setErrMsg] = useState("");
 
   const defaultValues = {
     Amount: random,
   };
+
+  const navigate = useNavigate();
+  const toCart = useCallback(
+    () => navigate("/", { replace: true }),
+    [navigate]
+  );
+
   const token =
     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImhlbGxvbGVlIiwicm9sZSI6ImN1c3RvbWVyIiwiaWF0IjoxNjUxMDk1MDY5LCJleHAiOjE2NTExMDU4Njl9.zZTFWwlN6yIPsi6UAETNHnsminyO6h4jjsazH4j0fa4";
   const Random = () => {
     axios
-      .post("http://2561-2a09-bac0-411-00-81e-ea19.ngrok.io/login", {
+      .post("http://2561-2a09-bac0-411-00-81e-ea19.ngrok.io/random", {
         token: token,
-        Amount: defaultValues.Amount,
+        Amount: String(defaultValues.Amount),
       })
       .then(function (response) {
-        if (response.data.status === "200OK") {
-          localStorage.setItem("token", response.data.token);
-          const decoded = jwt_decode(response.data.token);
-          const { username, role } = decoded;
-          console.log(response);
+        console.log(response);
+        if (response.data.status === "success") {
+          toCart();
+        } else if (response.data.status === "200CR") {
+          setErrMsg("จำนวนที่เลือกมีไม่พอ กรุณาเลือกใหม่อีกครั้ง");
         }
       })
       .catch(function (error) {
         console.log(error);
       });
   };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log(defaultValues);
@@ -47,11 +56,18 @@ const Random = () => {
           className="flex flex-col p-8 m-8 bg-white  md:min-w-[600px] 
      sm:min-w-[400px] min-w-[300px]  rounded-xl shadow-xl "
         >
-          <label className="block text-gray-darker text-lg font-bold mb-8">
+          <label className="block text-gray-darker text-lg font-bold mb-2">
             ระบบสุ่มฝาก
           </label>
+          <p
+            class={errMsg ? "errmsg" : "offscreen"}
+            className="text-red-600 text-md font-bold"
+            aria-live="assertive"
+          >
+            {errMsg}
+          </p>
           <form onSubmit={handleSubmit}>
-            <div className="mb-5">
+            <div className="mb-5 mt-2">
               <label
                 className="block text-gray-darker text-sm font-bold mb-2"
                 for="count"

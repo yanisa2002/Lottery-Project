@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import jwt_decode from "jwt-decode";
+// import { global_url_token } from "./global_url_token";
 
 const Register = () => {
   const [formErrors, setFormErrors] = useState({});
@@ -23,10 +24,12 @@ const Register = () => {
   const [province, setProvince] = useState("");
   const [zipCode, setZipCode] = useState("");
   const [idCard, setIDCard] = useState("");
-  const [urlImage, seturlImage] = useState("");
   const [wantToBeSeller, setWantToBeSeller] = useState("");
 
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [images, setImages] = useState([]);
+  const [imageURL, setImageURL] = useState([]);
+
   let beSell = wantToBeSeller === true ? "Yes" : "No";
   let addRole = beSell === "Yes" ? "seller" : "customer";
 
@@ -36,13 +39,22 @@ const Register = () => {
         <label class="inline-block mb-2 text-gray-darker">
           บัตรผู้ซื้อ-จองล่วงหน้าสลากกินแบ่งรัฐบาล
         </label>
-        <input
-          type="file"
-          value={urlImage}
-          onChange={(e) => seturlImage(e.target.value)}
-        />
+        <input type="file" multiple accept="image/*" onChange={onImageChange} />
+        {imageURL.map((imageSrc) => (
+          <img className="mt-3 ml-8" width="300" height="150" src={imageSrc} />
+        ))}
       </div>
     ) : null;
+  ////////////////////////////////////////////////////////change Date
+  let nowYear = new Date().getFullYear();
+  let dataYear = birthday.slice(0, 4);
+  let thaiYear = (parseInt(dataYear) + 543).toString();
+  let month = birthday.slice(5, 7);
+  let day = birthday.slice(8, 10);
+  let dateAll = thaiYear + month + day;
+
+  let result = nowYear - parseInt(dataYear);
+  ///////////////////////////////////////////////////////
 
   let defaultValues = {
     Title: title,
@@ -51,7 +63,7 @@ const Register = () => {
     Username: username,
     Password: password,
     Email: email,
-    Birthday: birthday,
+    Birthday: dateAll,
     Tel: tel,
     Address: {
       HomeNo: homeNo,
@@ -63,57 +75,75 @@ const Register = () => {
       ZipCode: zipCode,
     },
     IDCard: idCard,
-    URLImage: urlImage,
+    URLImage: imageURL[0],
     Role: addRole,
     wantToBeSeller: beSell,
   };
-  // let errors = {};
-  // const Register = () => {
-  //   axios
-  //     .post("http://2561-2a09-bac0-411-00-81e-ea19.ngrok.io/register", {
-  //       Title: defaultValues.Title,
-  //       Firstname: defaultValues.Firstname,
-  //       Lastname: defaultValues.Lastname,
-  //       Username: defaultValues.Username,
-  //       Password: defaultValues.Password,
-  //       Email: defaultValues.Email,
-  //       Birthday: defaultValues.Birthday,
-  //       Tel: defaultValues.Tel,
-  //       Address: {
-  //         HomeNo: defaultValues.Address.HomeNo,
-  //         Soi: defaultValues.Address.Soi,
-  //         Road: defaultValues.Address.Road,
-  //         Subdistrict: defaultValues.Address.Subdistrict,
-  //         District: defaultValues.Address.District,
-  //         Province: defaultValues.Address.Province,
-  //         ZipCode: defaultValues.Address.ZipCode,
-  //       },
-  //       IDCard: defaultValues.IDCard,
-  //       URLImage: defaultValues.URLImage,
-  //       Role: defaultValues.Role,
-  //       wantToBeSeller: defaultValues.wantToBeSeller,
-  //     })
-  //     .then(function (response) {
-  //       if (response.data.status === "200OK") {
-  //         localStorage.setItem("token", response.data.token);
-  //         const decoded = jwt_decode(response.data.token);
-  //         const { username, role } = decoded;
-  //         console.log(response);
-  //       } else if (response.data.status === "200US") {
-  //         errors["UserName"] = "ชื่อผู้ใช้นี้ถูกใช้งานแล้ว";
-  //       } else if (response.data.status === "200EM") {
-  //         errors["Email"] = "อีเมลนี้ถูกใช้งานแล้ว";
-  //       } else if (response.data.status === "200UE") {
-  //         errors["UserName"] = "ชื่อผู้ใช้นี้ถูกใช้งานแล้ว";
-  //         errors["Email"] = "อีเมลนี้ถูกใช้งานแล้ว";
-  //       }
-  //     })
-  //     .catch(function (error) {
-  //       console.log(error);
-  //     });
-  // };
 
   const navigate = useNavigate();
+  const toHome = useCallback(
+    () => navigate("/", { replace: true }),
+    [navigate]
+  );
+  const toSell = useCallback(
+    () => navigate("/account", { replace: true }),
+    [navigate]
+  );
+  let errors = {};
+  const Register = () => {
+    axios
+      .post(
+        "http://b169-2403-6200-88a4-4c62-9496-55ba-1f0c-4d43.ngrok.io/register",
+        {
+          Title: defaultValues.Title,
+          Firstname: defaultValues.Firstname,
+          Lastname: defaultValues.Lastname,
+          Username: defaultValues.Username,
+          Password: defaultValues.Password,
+          Email: defaultValues.Email,
+          Birthday: defaultValues.Birthday,
+          Tel: defaultValues.Tel,
+          Address: {
+            HomeNo: defaultValues.Address.HomeNo,
+            Soi: defaultValues.Address.Soi,
+            Road: defaultValues.Address.Road,
+            Subdistrict: defaultValues.Address.Subdistrict,
+            District: defaultValues.Address.District,
+            Province: defaultValues.Address.Province,
+            ZipCode: defaultValues.Address.ZipCode,
+          },
+          IDCard: defaultValues.IDCard,
+          URLImage: defaultValues.URLImage,
+          Role: defaultValues.Role,
+          wantToBeSeller: defaultValues.wantToBeSeller,
+        }
+      )
+      .then(function (response) {
+        if (response.data.status === "200OK") {
+          localStorage.setItem("token", response.data.token);
+          const decoded = jwt_decode(response.data.token);
+          const { username, role } = decoded;
+
+          if (role === "customer") {
+            toHome();
+          } else if (role === "seller") {
+            toSell();
+          }
+          console.log(response);
+        } else if (response.data.status === "200US") {
+          errors["UserName"] = "ชื่อผู้ใช้นี้ถูกใช้งานแล้ว";
+        } else if (response.data.status === "200EM") {
+          errors["Email"] = "อีเมลนี้ถูกใช้งานแล้ว";
+        } else if (response.data.status === "200UE") {
+          errors["UserName"] = "ชื่อผู้ใช้นี้ถูกใช้งานแล้ว";
+          errors["Email"] = "อีเมลนี้ถูกใช้งานแล้ว";
+        }
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  };
+
   const toAccountMs = useCallback(
     () => navigate("/", { replace: true }),
     [navigate]
@@ -127,6 +157,16 @@ const Register = () => {
 
     toAccountMs();
   };
+
+  useEffect(() => {
+    const newImageURL = [];
+    images.forEach((image) => newImageURL.push(URL.createObjectURL(image)));
+    setImageURL(newImageURL);
+  }, [images]);
+
+  function onImageChange(e) {
+    setImages([...e.target.files]);
+  }
 
   useEffect(() => {
     console.log(formErrors);
@@ -158,7 +198,7 @@ const Register = () => {
 
     if (idCard === "") {
       errors["IDCard"] = "กรุณากรอกเลขประจำตัวประชาชน";
-    } else if (!/\d{13}/.test(idCard)) {
+    } else if (!/^\d+$/.test(idCard)) {
       errors["IDCard"] = "กรุณากรอกเป็นตัวเลข";
     } else if (idCard.length !== 13) {
       errors["IDCard"] = "กรุณากรอกให้ครบ 13 หลัก";
@@ -166,6 +206,8 @@ const Register = () => {
 
     if (birthday === "") {
       errors["Birthday"] = "กรุณาเลือกวัน เดือน ปีเกิด";
+    } else if (result < 20) {
+      errors["Birthday"] = "ผู้ใช้ควรมีอายุอย่างน้อย 20 ปีบริบูรณ์";
     }
 
     if (email === "") {
@@ -176,9 +218,8 @@ const Register = () => {
 
     if (username === "") {
       errors["UserName"] = "กรุณากรอกชื่อผู้ใช้";
-    } else if (!/^[A-Za-z][A-Za-z0-9_]$/.test(username)) {
-      errors["UserName"] =
-        "กรุณากรอกเฉพาะอักขระภาษาอังกฤษ หรืออักขระพิเศษที่ปรากฎบนแป้นพิมพ์";
+    } else if (!/^[A-Za-z][A-Za-z0-9_]+$/.test(username)) {
+      errors["UserName"] = "กรุณาตั้งชื่อผู้ใช้ด้วยภาษาอังกฤษ ตัวเลข หรือ _";
     } else if (username.length < 4) {
       errors["UserName"] = "ชื่อผู้ใช้ต้องมี 4 ตัวอักษรขึ้นไป";
     } else if (username.length > 24) {
@@ -197,8 +238,8 @@ const Register = () => {
     }
     if (tel === "") {
       errors["Tel"] = "กรุณากรอกเบอร์โทรศัพท์";
-    } else if (!/0\d{8,9}/.test(tel)) {
-      errors["Tel"] = "เบอร์โทรศัพท์เริ่มต้นที่ 0";
+    } else if (!/0[6,8,9]\d+/.test(tel)) {
+      errors["Tel"] = "เบอร์โทรศัพท์ไม่ถูกต้อง";
     } else if (tel.length !== 10) {
       errors["Tel"] = "กรุณากรอกเบอร์โทรศัพท์ให้ครบ 10 หลัก";
     }
@@ -211,30 +252,44 @@ const Register = () => {
 
     if (homeNo === "") {
       errors["HomeNo"] = "กรุณากรอกบ้านเลขที่";
+    } else if (!/^[0-9/]{0,31}$/.test(homeNo)) {
+      errors["HomeNo"] = "เลขที่อยู่ไม่ถูกต้อง";
     }
 
     if (soi === "") {
       errors["Soi"] = "กรุณากรอกซอย";
+    } else if (!/^[ก-๏\s0-9-/]{0,31}$/.test(soi)) {
+      errors["Soi"] = "ที่อยู่ไม่ถูกต้อง";
     }
 
     if (road === "") {
       errors["Road"] = "กรุณากรอกถนน";
+    } else if (!/^[ก-๏\s0-9-/]{0,31}$/.test(road)) {
+      errors["Road"] = "ที่อยู่ไม่ถูกต้อง";
     }
 
     if (subDistrict === "") {
       errors["SubDistrict"] = "กรุณากรอกแขวง/ตำบล";
+    } else if (!/^[ก-๏]{0,31}$/.test(subDistrict)) {
+      errors["SubDistrict"] = "ที่อยู่ไม่ถูกต้อง";
     }
 
     if (district === "") {
       errors["District"] = "กรุณากรอกเขต/อำเภอ";
+    } else if (!/^[ก-๏]{0,31}$/.test(district)) {
+      errors["District"] = "ที่อยู่ไม่ถูกต้อง";
     }
 
     if (province === "") {
       errors["Province"] = "กรุณากรอกจังหวัด";
+    } else if (!/^[ก-๏]{0,31}$/.test(province)) {
+      errors["Province"] = "ที่อยู่ไม่ถูกต้อง";
     }
 
     if (zipCode === "") {
       errors["ZipCode"] = "กรุณากรอกรหัสไปรษณีย์";
+    } else if (!/^[0-9]{5}$/.test(zipCode)) {
+      errors["ZipCode"] = "ที่อยู่ไม่ถูกต้อง";
     }
     console.log("error -> ", errors);
     return errors;
@@ -252,6 +307,9 @@ const Register = () => {
         <div className="flex flex-col p-8 m-8 bg-white w-[600px] sm:min-w-[400px] min-w-[300px]  rounded-xl shadow-xl">
           <h1 className="text-xl font-bold mb-2">สร้างบัญชีของคุณ</h1>
           <h2 className="text-lg mb-4 text-[#E54E3D]">ข้อมูลส่วนตัว</h2>
+          {/* {Object.keys(formErrors).length === 0 && isSubmit ? (
+            toAccountMs()
+          ) : ( */}
           <form onSubmit={handleSubmit}>
             <label
               className="block text-gray-darker text-md font-bold mb-2"
@@ -590,6 +648,7 @@ const Register = () => {
               </button>
             </div>
           </form>
+          {/* )} */}
 
           <Link to="/">
             <div className="mb-7">

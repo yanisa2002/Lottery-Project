@@ -1,7 +1,8 @@
-import React, { useRef, useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import React, { useRef, useState, useEffect, useCallback } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import jwt_decode from "jwt-decode";
+// import { global_url_token } from "./global_url_token"
 
 const LogIn = () => {
   const userRef = useRef();
@@ -10,24 +11,49 @@ const LogIn = () => {
   const [user, setUser] = useState("");
   const [pwd, setPwd] = useState("");
   const [errMsg, setErrMsg] = useState("");
-  const [success, setSuccess] = useState(false);
+
+  const navigate = useNavigate();
+  const toHome = useCallback(
+    () => navigate("/", { replace: true }),
+    [navigate]
+  );
+  const toAdmin = useCallback(
+    () => navigate("/cart", { replace: true }),
+    [navigate]
+  );
+  const toSell = useCallback(
+    () => navigate("/account", { replace: true }),
+    [navigate]
+  );
 
   const defaultValues = {
-    username: user,
+    Username: user,
     Password: pwd,
   };
 
   const Login = () => {
     axios
-      .post("http://2561-2a09-bac0-411-00-81e-ea19.ngrok.io/login", {
-        Username: defaultValues.user,
-        Password: defaultValues.pwd,
-      })
+      .post(
+        "http://b169-2403-6200-88a4-4c62-9496-55ba-1f0c-4d43.ngrok.io/login",
+        {
+          Username: defaultValues.Username,
+          Password: defaultValues.Password,
+        }
+      )
       .then(function (response) {
+        console.log(response);
         if (response.data.status === "200OK") {
           localStorage.setItem("token", response.data.token);
           const decoded = jwt_decode(response.data.token);
           const { username, role } = decoded;
+
+          if (role === "customer") {
+            toHome();
+          } else if (role === "seller") {
+            toSell();
+          } else if (role === "admin") {
+            toAdmin();
+          }
           console.log(response);
         } else if (response.data.status === "200ER") {
           //รหัสผิดทำไร ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง
@@ -52,6 +78,7 @@ const LogIn = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log(defaultValues);
+    Login();
     setUser("");
     setPwd("");
     // setSuccess(true);
@@ -67,6 +94,9 @@ const LogIn = () => {
           ใส่ชื่อผู้ใช้ และ รหัสผ่าน ด้านล่างเพื่อเข้าสู่ระบบ
         </div>
 
+        {/* {Object.keys(formErrors).length === 0 && isSubmit ? (
+            toAccountMs()
+          ) : ( */}
         {/* {success ? (
           <section>
             <h1>You are logged in!</h1>
@@ -85,7 +115,8 @@ const LogIn = () => {
           </label>
           <p
             ref={errRef}
-            className={errMsg ? "errmsg" : "offscreen"}
+            class={errMsg ? "errmsg" : "offscreen"}
+            className="text-red-600 text-md font-bold"
             aria-live="assertive"
           >
             {errMsg}
